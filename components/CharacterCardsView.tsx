@@ -218,7 +218,7 @@ const CharacterCardsView: React.FC<CharacterCardsViewProps> = ({
   return (
     <div 
       className="w-full h-full flex flex-col animate-in fade-in duration-500 relative overflow-hidden"
-      style={glassStyles}
+      style={{ background: 'transparent' }}
       onContextMenu={handleBgContextMenu}
       onTouchStart={handleBgLongPress}
       onTouchMove={handleTouchMoveInternal}

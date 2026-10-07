@@ -292,17 +292,15 @@ const ProfileSelectorView: React.FC<ProfileSelectorViewProps> = ({
       >
         {/* Header Section */}
         <div 
-          className="flex-shrink-0 px-4 pt-[max(0.75rem,env(safe-area-inset-top))] pb-3 md:px-6 relative shadow-lg z-20"
+          className={`flex-shrink-0 px-4 pt-[max(0.75rem,env(safe-area-inset-top))] pb-3 md:px-6 relative z-20 ${isMobile ? 'shadow-lg' : ''}`}
           style={{
             background: isMobile 
               ? (isBackgroundDark 
                   ? `linear-gradient(to bottom, rgba(10, 15, 20, 1) 0%, rgba(10, 15, 20, 1) 25%, rgba(10, 15, 20, ${(appearance?.transparency ?? 0) / 100}) 100%)`
                   : `linear-gradient(to bottom, rgba(255, 255, 255, 1) 0%, rgba(255, 255, 255, 1) 25%, rgba(255, 255, 255, ${(appearance?.transparency ?? 0) / 100}) 100%)`)
-              : (isBackgroundDark 
-                  ? `rgba(10, 15, 20, ${(appearance?.transparency ?? 0) / 100})`
-                  : `rgba(255, 255, 255, ${(appearance?.transparency ?? 0) / 100})`),
-            backdropFilter: `blur(${appearance?.blur ?? 40}px)`,
-            WebkitBackdropFilter: `blur(${appearance?.blur ?? 40}px)`
+              : 'transparent',
+            backdropFilter: isMobile ? `blur(${appearance?.blur ?? 40}px)` : 'none',
+            WebkitBackdropFilter: isMobile ? `blur(${appearance?.blur ?? 40}px)` : 'none'
           }}
         >
           <div className="flex items-center justify-between mb-4">
