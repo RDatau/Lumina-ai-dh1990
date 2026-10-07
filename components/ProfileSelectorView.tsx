@@ -283,7 +283,16 @@ const ProfileSelectorView: React.FC<ProfileSelectorViewProps> = ({
         style={glassStyles}
       >
         {/* Header Section */}
-        <div className={`flex-shrink-0 p-4 px-6 md:p-6 relative`}>
+        <div 
+          className="flex-shrink-0 px-4 pt-[max(0.75rem,env(safe-area-inset-top))] pb-3 md:px-6 relative shadow-lg z-20"
+          style={{
+            background: isBackgroundDark 
+              ? `linear-gradient(to bottom, rgba(10, 15, 20, 1) 0%, rgba(10, 15, 20, 1) 25%, rgba(10, 15, 20, ${(appearance?.transparency ?? 0) / 100}) 100%)`
+              : `linear-gradient(to bottom, rgba(255, 255, 255, 1) 0%, rgba(255, 255, 255, 1) 25%, rgba(255, 255, 255, ${(appearance?.transparency ?? 0) / 100}) 100%)`,
+            backdropFilter: `blur(${appearance?.blur ?? 40}px)`,
+            WebkitBackdropFilter: `blur(${appearance?.blur ?? 40}px)`
+          }}
+        >
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-3 mb-0">
               <div className="w-8 h-8 rounded-lg flex md:hidden items-center justify-center shadow-lg overflow-hidden">
