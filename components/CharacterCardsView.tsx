@@ -255,12 +255,12 @@ const CharacterCardsView: React.FC<CharacterCardsViewProps> = ({
                 border: 'none'
               }}
             >
-            <div className="flex items-center gap-2.5 min-w-0">
+            <div className="flex items-center gap-3 min-w-0">
               <div 
-                className={`w-1.5 h-4.5 ${isBackgroundDark ? 'bg-white' : 'bg-zinc-900'} rounded-full shrink-0 shadow-sm`} 
+                className={`w-1.5 ${isSidebar ? 'h-4' : 'h-6 md:h-7'} ${isBackgroundDark ? 'bg-white' : 'bg-zinc-900'} rounded-full shrink-0 shadow-sm`} 
               />
-              <h1 className={`${isSidebar ? 'text-[10px]' : 'text-xs sm:text-sm'} font-black tracking-[0.2em] ${themeTextClass} uppercase select-none truncate`}>
-                {isSidebar ? 'Agen' : 'Character'}
+              <h1 className={`${isSidebar ? 'text-xs' : 'text-2xl md:text-3xl'} font-black tracking-tighter ${themeTextClass} select-none truncate`}>
+                {isSidebar ? 'Agen' : 'Karakter'}
               </h1>
 
               {!isSidebar && (

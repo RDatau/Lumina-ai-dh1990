@@ -398,11 +398,11 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
         {/* MOBILE HEADER (Visible on small screens only) */}
         <div className="px-4 pt-[max(0.75rem,env(safe-area-inset-top))] pb-2 border-none flex flex-col select-none md:hidden flex-shrink-0">
           <div className="flex items-center justify-between mb-2.5 min-h-[32px]">
-            <div className="flex items-center gap-2.5 min-w-0">
+            <div className="flex items-center gap-3 min-w-0">
               <div 
-                className={`w-1.5 h-4.5 ${isBackgroundDark ? 'bg-white' : 'bg-zinc-900'} rounded-full shrink-0 shadow-sm`} 
+                className={`w-1.5 h-6 md:h-7 ${isBackgroundDark ? 'bg-white' : 'bg-zinc-900'} rounded-full shrink-0 shadow-sm`} 
               />
-              <h2 className={`text-xs sm:text-sm font-black uppercase tracking-[0.2em] ${dynamicTextColor} select-none truncate`}>Pengaturan</h2>
+              <h2 className={`text-2xl md:text-3xl font-black tracking-tighter ${dynamicTextColor} select-none truncate`}>Pengaturan</h2>
             </div>
             {!isEmbeddedPage && (
               <button onClick={onClose} className={`p-1.5 rounded-full ${isBackgroundDark ? 'hover:bg-white/10' : 'hover:bg-black/10'} transition-all ${dynamicMutedTextColor}`}>
