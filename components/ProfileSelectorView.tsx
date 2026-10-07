@@ -125,6 +125,14 @@ const ProfileSelectorView: React.FC<ProfileSelectorViewProps> = ({
     };
   }, [isMenuOpen]);
 
+  const [isMobile, setIsMobile] = React.useState<boolean>(() => typeof window !== 'undefined' && window.innerWidth < 768);
+
+  React.useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 768);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
   const getContrastColor = (hex?: string) => {
     if (!hex) return 'white';
     const r = parseInt(hex.slice(1, 3), 16);
@@ -286,9 +294,13 @@ const ProfileSelectorView: React.FC<ProfileSelectorViewProps> = ({
         <div 
           className="flex-shrink-0 px-4 pt-[max(0.75rem,env(safe-area-inset-top))] pb-3 md:px-6 relative shadow-lg z-20"
           style={{
-            background: isBackgroundDark 
-              ? `linear-gradient(to bottom, rgba(10, 15, 20, 1) 0%, rgba(10, 15, 20, 1) 25%, rgba(10, 15, 20, ${(appearance?.transparency ?? 0) / 100}) 100%)`
-              : `linear-gradient(to bottom, rgba(255, 255, 255, 1) 0%, rgba(255, 255, 255, 1) 25%, rgba(255, 255, 255, ${(appearance?.transparency ?? 0) / 100}) 100%)`,
+            background: isMobile 
+              ? (isBackgroundDark 
+                  ? `linear-gradient(to bottom, rgba(10, 15, 20, 1) 0%, rgba(10, 15, 20, 1) 25%, rgba(10, 15, 20, ${(appearance?.transparency ?? 0) / 100}) 100%)`
+                  : `linear-gradient(to bottom, rgba(255, 255, 255, 1) 0%, rgba(255, 255, 255, 1) 25%, rgba(255, 255, 255, ${(appearance?.transparency ?? 0) / 100}) 100%)`)
+              : (isBackgroundDark 
+                  ? `rgba(10, 15, 20, ${(appearance?.transparency ?? 0) / 100})`
+                  : `rgba(255, 255, 255, ${(appearance?.transparency ?? 0) / 100})`),
             backdropFilter: `blur(${appearance?.blur ?? 40}px)`,
             WebkitBackdropFilter: `blur(${appearance?.blur ?? 40}px)`
           }}

@@ -97,6 +97,14 @@ const CharacterCardsView: React.FC<CharacterCardsViewProps> = ({
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [menuOpenId]);
 
+  const [isMobile, setIsMobile] = React.useState<boolean>(() => typeof window !== 'undefined' && window.innerWidth < 768);
+
+  React.useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 768);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
   const handleBgContextMenu = (e: React.MouseEvent) => {
     const items = [
       { label: 'Import', icon: <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a2 2 0 002 2h12a2 2 0 002-2v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>, onClick: () => onRestore?.() },
@@ -248,9 +256,13 @@ const CharacterCardsView: React.FC<CharacterCardsViewProps> = ({
             <header 
               className={`flex items-center justify-between min-h-[56px] shadow-2xl transition-all duration-300 rounded-none md:rounded-full ${isSidebar ? 'p-1.5 px-3' : 'px-4 pt-[max(0.75rem,env(safe-area-inset-top))] pb-2 md:px-6'}`} 
               style={{
-                background: isBackgroundDark 
-                  ? `linear-gradient(to bottom, rgba(10, 15, 20, 1) 0%, rgba(10, 15, 20, 1) 25%, rgba(10, 15, 20, ${(appearance?.transparency ?? 0) / 100}) 100%)`
-                  : `linear-gradient(to bottom, rgba(255, 255, 255, 1) 0%, rgba(255, 255, 255, 1) 25%, rgba(255, 255, 255, ${(appearance?.transparency ?? 0) / 100}) 100%)`,
+                background: isMobile 
+                  ? (isBackgroundDark 
+                      ? `linear-gradient(to bottom, rgba(10, 15, 20, 1) 0%, rgba(10, 15, 20, 1) 25%, rgba(10, 15, 20, ${(appearance?.transparency ?? 0) / 100}) 100%)`
+                      : `linear-gradient(to bottom, rgba(255, 255, 255, 1) 0%, rgba(255, 255, 255, 1) 25%, rgba(255, 255, 255, ${(appearance?.transparency ?? 0) / 100}) 100%)`)
+                  : (isBackgroundDark 
+                      ? `rgba(10, 15, 20, ${(appearance?.transparency ?? 0) / 100})`
+                      : `rgba(255, 255, 255, ${(appearance?.transparency ?? 0) / 100})`),
                 backdropFilter: `blur(${appearance?.blur ?? 40}px)`,
                 WebkitBackdropFilter: `blur(${appearance?.blur ?? 40}px)`,
                 border: 'none'
