@@ -202,7 +202,7 @@ const CharacterCardsView: React.FC<CharacterCardsViewProps> = ({
   const contrastColor = getContrastColor(themeHex);
 
   const glassStyles = {
-    backgroundColor: isBackgroundDark ? `rgba(0, 0, 0, ${(appearance?.transparency ?? 0) / 100})` : `rgba(255, 255, 255, ${(appearance?.transparency ?? 0) / 100})`,
+    backgroundColor: isBackgroundDark ? `rgba(10, 15, 20, ${(appearance?.transparency ?? 0) / 100})` : `rgba(255, 255, 255, ${(appearance?.transparency ?? 0) / 100})`,
     backdropFilter: `blur(${appearance?.blur ?? 40}px)`,
     WebkitBackdropFilter: `blur(${appearance?.blur ?? 40}px)`
   };
@@ -210,6 +210,7 @@ const CharacterCardsView: React.FC<CharacterCardsViewProps> = ({
   return (
     <div 
       className="w-full h-full flex flex-col animate-in fade-in duration-500 relative overflow-hidden"
+      style={glassStyles}
       onContextMenu={handleBgContextMenu}
       onTouchStart={handleBgLongPress}
       onTouchMove={handleTouchMoveInternal}

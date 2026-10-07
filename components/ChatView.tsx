@@ -1,6 +1,6 @@
 
 import React, { useState, useRef, useEffect, useMemo } from 'react';
-import { AgentConfig, ChatMessage, Attachment, UserProfile, GlobalAppearance, ActiveGenerationTask } from '../types';
+import { AgentConfig, ChatMessage, Attachment, UserProfile, GlobalAppearance, ActiveGenerationTask, AppState } from '../types';
 import { generateAgentResponse, getSpeech, generatePAP, cleanResponseText, generateErrorMessage, reviseAgentResponseBasedOnImage, generateSmartTitle, isTtsModelStreamSupported, getActiveTtsModel, cleanRawCaptionToPureGarment, regeneratePapVariation, getAllGeminiApiKeys } from '../services/geminiService';
 import { triggerNewMessageNotification } from '../services/notificationService';
 import ImageInfoModal from './ImageInfoModal';
@@ -602,38 +602,39 @@ const ChatView: React.FC<ChatViewProps> = ({
     imageUrl: null,
   });
 
-  // Media Preview Back Button Handler (Android / Browser Back)
-  const isMediaPreviewOpenRef = useRef(false);
-  useEffect(() => {
-    const isAnyModalOpen = Boolean(previewMedia || showProfilePreview || showGallery || imageInfoData.isOpen);
+  const closeAllModals = () => {
+    setPreviewMedia(null);
+    setShowProfilePreview(false);
+    setShowGallery(false);
+    setImageInfoData(prev => ({ ...prev, isOpen: false }));
+  };
 
+  const handleCloseMediaModal = () => {
+    closeAllModals();
+    if (window.history.state && window.history.state.isMediaPreview) {
+      window.history.back();
+    }
+  };
+
+  // Media Preview Back Button Handler (Android / Browser Back)
+  const isAnyModalOpen = Boolean(previewMedia || showProfilePreview || showGallery || imageInfoData.isOpen);
+
+  useEffect(() => {
     if (isAnyModalOpen) {
-      if (!isMediaPreviewOpenRef.current) {
-        isMediaPreviewOpenRef.current = true;
-        window.history.pushState({ isMediaPreview: true }, '');
+      if (!window.history.state || !window.history.state.isMediaPreview) {
+        window.history.pushState({ isMediaPreview: true, appState: AppState.CHAT }, '');
       }
 
       const handleMediaPopState = () => {
-        isMediaPreviewOpenRef.current = false;
-        setPreviewMedia(null);
-        setShowProfilePreview(false);
-        setShowGallery(false);
-        setImageInfoData(prev => ({ ...prev, isOpen: false }));
+        closeAllModals();
       };
 
       window.addEventListener('popstate', handleMediaPopState);
       return () => {
         window.removeEventListener('popstate', handleMediaPopState);
       };
-    } else {
-      if (isMediaPreviewOpenRef.current) {
-        isMediaPreviewOpenRef.current = false;
-        if (window.history.state && window.history.state.isMediaPreview) {
-          window.history.back();
-        }
-      }
     }
-  }, [previewMedia, showProfilePreview, showGallery, imageInfoData.isOpen]);
+  }, [isAnyModalOpen]);
 
   const [isRegeneratingVariation, setIsRegeneratingVariation] = useState<boolean>(false);
   const [regeneratingStatus, setRegeneratingStatus] = useState<string>('');
@@ -3152,7 +3153,7 @@ const ChatView: React.FC<ChatViewProps> = ({
       {showProfilePreview && (
         <div 
           className="fixed inset-0 z-[200] flex items-center justify-center p-4 bg-black/90 backdrop-blur-3xl animate-in fade-in duration-300" 
-          onClick={() => setShowProfilePreview(false)}
+          onClick={handleCloseMediaModal}
           onDragOver={e => { e.preventDefault(); e.stopPropagation(); setIsDraggingProfile(true); }}
           onDragLeave={e => { e.preventDefault(); e.stopPropagation(); setIsDraggingProfile(false); }}
           onDrop={handleProfileDrop}
@@ -3177,7 +3178,7 @@ const ChatView: React.FC<ChatViewProps> = ({
             </div>
             <img src={config.profilePic || undefined} className={`w-full h-full object-cover rounded-[35px] md:rounded-[50px] shadow-2xl transition-all duration-300 ${isDraggingProfile ? 'blur-sm opacity-50' : 'opacity-100'}`} alt="Profile Full" />
             <div className="absolute top-6 right-6 flex flex-col gap-3 z-20">
-              <button onClick={() => setShowProfilePreview(false)} className="bg-white/10 backdrop-blur-md text-white p-3 rounded-2xl shadow-2xl hover:bg-white hover:text-black hover:scale-110 active:scale-95 transition-all border border-white/20" title="Tutup">
+              <button onClick={handleCloseMediaModal} className="bg-white/10 backdrop-blur-md text-white p-3 rounded-2xl shadow-2xl hover:bg-white hover:text-black hover:scale-110 active:scale-95 transition-all border border-white/20" title="Tutup">
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M6 18L18 6M6 6l12 12" /></svg>
               </button>
               <button onClick={() => {
@@ -3205,7 +3206,7 @@ const ChatView: React.FC<ChatViewProps> = ({
       {showGallery && (
         <div 
           className={`fixed inset-0 z-[250] flex items-center justify-center p-4 ${isBackgroundDark ? 'bg-black/80' : 'bg-white/80'} backdrop-blur-2xl animate-in fade-in duration-300`} 
-          onClick={() => setShowGallery(false)}
+          onClick={handleCloseMediaModal}
           onContextMenu={(e) => handleBgContextMenu(e)}
           onTouchStart={(e) => handleBgLongPress(e)}
           onTouchMove={handleTouchMoveInternal}
@@ -3537,7 +3538,7 @@ const ChatView: React.FC<ChatViewProps> = ({
       {previewMedia && (
         <div 
           className="fixed inset-0 z-[300] flex items-center justify-center p-4 bg-black/95 backdrop-blur-3xl animate-in fade-in duration-300 select-none" 
-          onClick={() => setPreviewMedia(null)}
+          onClick={handleCloseMediaModal}
           onContextMenu={(e) => handleBgContextMenu(e)}
           onTouchStart={(e) => {
             onTouchStart(e);
@@ -3592,7 +3593,7 @@ const ChatView: React.FC<ChatViewProps> = ({
                  >
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 group-hover:scale-110" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3" /></svg>
                  </button>
-                 <button onClick={() => setPreviewMedia(null)} className="p-2.5 bg-white/10 hover:bg-red-500 rounded-xl text-white transition-all active:scale-90 border border-white/10 group">
+                 <button onClick={handleCloseMediaModal} className="p-2.5 bg-white/10 hover:bg-red-500 rounded-xl text-white transition-all active:scale-90 border border-white/10 group">
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 group-hover:scale-110" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M6 18L18 6M6 6l12 12" /></svg>
                  </button>
               </div>
