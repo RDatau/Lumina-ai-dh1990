@@ -546,19 +546,10 @@ const App: React.FC = () => {
       setThemeHex(finalHex);
 
       // --- STATUS BAR COLOR LOGIC ---
-      // Default to a dark/light color based on theme, NOT the accent color
+      // Always match the exact top solid color of our app headers (#0a0f14 in dark mode, #ffffff in light mode)
       let statusBarColor = isDark ? '#0a0f14' : '#ffffff'; 
-      
-      if (appearance.background && appearance.background !== 'google-theme' && (appearance.background.startsWith('http') || appearance.background.startsWith('data:'))) {
-        try {
-          const topColor = await getDominantColor(appearance.background, true);
-          statusBarColor = topColor.hex;
-        } catch (e) {
-          console.warn("Failed to get top wallpaper color:", e);
-        }
-      }
 
-      // Update ALL theme-color meta tags to be sure
+      // Update ALL theme-color meta tags to be sure Chrome PWA status bar syncs perfectly
       const metaThemes = document.querySelectorAll('meta[name="theme-color"]');
       if (metaThemes.length > 0) {
         metaThemes.forEach(m => m.setAttribute('content', statusBarColor));
