@@ -802,6 +802,54 @@ const ChatView: React.FC<ChatViewProps> = ({
   const [deletingIds, setDeletingIds] = useState<Set<string>>(new Set());
   const [showTranscript, setShowTranscript] = useState(false);
   const [transcriptText, setTranscriptText] = useState('');
+
+  // Track open state for media/info modals in ChatView
+  const isAnyChatModalOpen = previewMedia !== null || imageInfoData.isOpen || showProfilePreview || showGallery || showTranscript;
+  const prevModalOpenRef = useRef<boolean>(false);
+
+  useEffect(() => {
+    if (isAnyChatModalOpen && !prevModalOpenRef.current) {
+      // Modal just opened! Push a history entry for Android Back button
+      try {
+        if (!window.history.state?.isChatModalOpen) {
+          window.history.pushState({ isChatModalOpen: true }, '');
+        }
+      } catch (e) {}
+    } else if (!isAnyChatModalOpen && prevModalOpenRef.current) {
+      // Modal just closed via UI click! Pop the history entry if it was pushed
+      try {
+        if (window.history.state?.isChatModalOpen) {
+          window.history.back();
+        }
+      } catch (e) {}
+    }
+    prevModalOpenRef.current = isAnyChatModalOpen;
+  }, [isAnyChatModalOpen]);
+
+  // Intercept Android Back button / Back gesture when any media/info modal is open inside ChatView
+  useEffect(() => {
+    const handleChatPopState = (e: PopStateEvent) => {
+      const modalOpen = previewMedia !== null || imageInfoData.isOpen || showProfilePreview || showGallery || showTranscript;
+      if (modalOpen) {
+        // Prevent going back to ProfileSelector! Close open modal in ChatView instead.
+        e.stopImmediatePropagation();
+        e.stopPropagation();
+
+        setPreviewMedia(null);
+        setImageInfoData(prev => ({ ...prev, isOpen: false }));
+        setShowProfilePreview(false);
+        setShowGallery(false);
+        setShowTranscript(false);
+      }
+    };
+
+    // Use capturing phase so this listener runs BEFORE global App.tsx popstate listener
+    window.addEventListener('popstate', handleChatPopState, true);
+
+    return () => {
+      window.removeEventListener('popstate', handleChatPopState, true);
+    };
+  }, [previewMedia, imageInfoData.isOpen, showProfilePreview, showGallery, showTranscript]);
   
   const [touchStart, setTouchStart] = useState<number | null>(null);
   const [dragOffset, setDragOffset] = useState(0);

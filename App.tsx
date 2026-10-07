@@ -26,8 +26,8 @@ const App: React.FC = () => {
   // Navigation handling for Android back button/gestures
   const handleNavigate = (newState: AppState, replace = false) => {
     if (newState === appState) return;
-    if (replace) {
-      window.history.replaceState({ appState: newState }, '');
+    if (replace || newState === AppState.PROFILE_SELECT) {
+      window.history.replaceState({ appState: newState, isRoot: newState === AppState.PROFILE_SELECT }, '');
     } else {
       window.history.pushState({ appState: newState }, '');
     }
@@ -114,23 +114,32 @@ const App: React.FC = () => {
 
   useEffect(() => {
     const handlePopState = (e: PopStateEvent) => {
+      // Jika user sedang berada di halaman utama (PROFILE_SELECT) dan menekan tombol kembali Android:
+      if (appStateRef.current === AppState.PROFILE_SELECT) {
+        // Biarkan browser / Android PWA keluar aplikasi secara alami atau panggil Capacitor exitApp
+        if (typeof window !== 'undefined' && (window as any).Capacitor?.Plugins?.App?.exitApp) {
+          (window as any).Capacitor.Plugins.App.exitApp();
+        }
+        return;
+      }
+
       if (e.state && e.state.appState) {
         setAppState(e.state.appState);
       } else {
-        // Default fallback
+        // Default fallback ke root
         setAppState(AppState.PROFILE_SELECT);
       }
     };
 
     window.addEventListener('popstate', handlePopState);
     
-    // Initialize history state if not present
+    // Initialize root history state if not present
     if (!window.history.state) {
-      window.history.replaceState({ appState: appState }, '');
+      window.history.replaceState({ appState: AppState.PROFILE_SELECT, isRoot: true }, '');
     }
 
     return () => window.removeEventListener('popstate', handlePopState);
-  }, [appState]);
+  }, []);
 
   // Global Context Menu for App
   useEffect(() => {
