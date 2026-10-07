@@ -297,8 +297,17 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
 
   const voiceChatOptions = isGemini38Tts ? gemini38VoiceOptions : standardVoiceOptions;
 
+  const glassStyles = {
+    backgroundColor: isBackgroundDark ? `rgba(10, 15, 20, ${(appearance?.transparency ?? 0) / 100})` : `rgba(255, 255, 255, ${(appearance?.transparency ?? 0) / 100})`,
+    backdropFilter: `blur(${appearance?.blur ?? 40}px)`,
+    WebkitBackdropFilter: `blur(${appearance?.blur ?? 40}px)`
+  };
+
   const contentNode = (
-    <div className={`relative w-full ${isEmbeddedPage ? 'h-full rounded-none border-none shadow-none pb-[85px] md:pb-0' : 'max-w-lg md:max-w-4xl lg:max-w-5xl xl:max-w-6xl md:h-[84vh] md:max-h-[720px] max-h-[92vh] rounded-3xl md:rounded-[32px] border ' + dynamicBorderColor + ' shadow-2xl'} ${dynamicBg} backdrop-blur-2xl overflow-hidden animate-in fade-in duration-300 flex flex-col md:flex-row`}>
+    <div 
+      className={`relative w-full ${isEmbeddedPage ? 'h-full rounded-none border-none shadow-none pb-[85px] md:pb-0' : 'max-w-lg md:max-w-4xl lg:max-w-5xl xl:max-w-6xl md:h-[84vh] md:max-h-[720px] max-h-[92vh] rounded-3xl md:rounded-[32px] border ' + dynamicBorderColor + ' shadow-2xl'} overflow-hidden animate-in fade-in duration-300 flex flex-col md:flex-row`}
+      style={glassStyles}
+    >
       {/* DESKTOP / WIDE SIDEBAR (Visible on md+) */}
         <div className="hidden md:flex md:w-60 lg:w-72 flex-shrink-0 flex-col justify-between border-r border-white/10 p-5 lg:p-6 bg-black/15 select-none">
           <div className="space-y-6">
@@ -396,7 +405,16 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
         </div>
 
         {/* MOBILE HEADER (Visible on small screens only) */}
-        <div className="px-4 pt-[max(0.75rem,env(safe-area-inset-top))] pb-2 border-none flex flex-col select-none md:hidden flex-shrink-0">
+        <div 
+          className="px-4 pt-[max(0.75rem,env(safe-area-inset-top))] pb-2.5 border-none flex flex-col select-none md:hidden flex-shrink-0 shadow-lg"
+          style={{
+            background: isBackgroundDark 
+              ? `linear-gradient(to bottom, rgba(10, 15, 20, 1) 0%, rgba(10, 15, 20, 1) 25%, rgba(10, 15, 20, ${(appearance?.transparency ?? 0) / 100}) 100%)`
+              : `linear-gradient(to bottom, rgba(255, 255, 255, 1) 0%, rgba(255, 255, 255, 1) 25%, rgba(255, 255, 255, ${(appearance?.transparency ?? 0) / 100}) 100%)`,
+            backdropFilter: `blur(${appearance?.blur ?? 40}px)`,
+            WebkitBackdropFilter: `blur(${appearance?.blur ?? 40}px)`
+          }}
+        >
           <div className="flex items-center justify-between mb-2.5 min-h-[32px]">
             <div className="flex items-center gap-3 min-w-0">
               <div 

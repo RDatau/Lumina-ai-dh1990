@@ -178,21 +178,33 @@ const UserProfileModal: React.FC<UserProfileModalProps> = ({ isOpen, onClose, pr
   const themeContrastColor = getContrastColor(themeHex);
   const themeTextClass = themeContrastColor === 'black' ? 'text-black' : 'text-white';
 
+  const glassStyles = {
+    backgroundColor: isDark ? `rgba(10, 15, 20, ${(appearance?.transparency ?? 0) / 100})` : `rgba(255, 255, 255, ${(appearance?.transparency ?? 0) / 100})`,
+    backdropFilter: (appearance?.blur ?? 40) === 0 ? 'none' : `blur(${appearance?.blur ?? 40}px)`,
+    WebkitBackdropFilter: (appearance?.blur ?? 40) === 0 ? 'none' : `blur(${appearance?.blur ?? 40}px)`
+  };
+
   const contentNode = (
     <div 
-      className={`relative w-full ${isEmbeddedPage ? 'h-full rounded-none border-none shadow-none pb-[85px] md:pb-0 overflow-y-auto custom-scrollbar' : 'max-w-lg rounded-[40px] shadow-2xl max-h-[90vh] border ' + dynamicBorderColor} ${isDark ? 'bg-zinc-950/90' : 'bg-white/90'} backdrop-blur-2xl overflow-hidden animate-in fade-in duration-300 flex flex-col`}
+      className={`relative w-full ${isEmbeddedPage ? 'h-full rounded-none border-none shadow-none pb-[85px] md:pb-0 overflow-y-auto custom-scrollbar' : 'max-w-lg rounded-[40px] shadow-2xl max-h-[90vh] border ' + dynamicBorderColor} overflow-hidden animate-in fade-in duration-300 flex flex-col`}
       onContextMenu={(e) => {
         // Biarkan event context menu naik ke window agar ditangani oleh App.tsx
         // Jangan stopPropagation di sini
       }}
-      style={{
-        backdropFilter: (appearance?.blur ?? 40) === 0 ? 'none' : `blur(${appearance?.blur ?? 40}px)`,
-        WebkitBackdropFilter: (appearance?.blur ?? 40) === 0 ? 'none' : `blur(${appearance?.blur ?? 40}px)`
-      }}
+      style={glassStyles}
     >
         
         {/* Header */}
-        <div className="px-4 pt-[max(0.75rem,env(safe-area-inset-top))] pb-2 border-none flex items-center justify-between min-h-[56px] select-none flex-shrink-0">
+        <div 
+          className="px-4 pt-[max(0.75rem,env(safe-area-inset-top))] pb-2.5 border-none flex items-center justify-between min-h-[56px] select-none flex-shrink-0 shadow-lg"
+          style={{
+            background: isDark 
+              ? `linear-gradient(to bottom, rgba(10, 15, 20, 1) 0%, rgba(10, 15, 20, 1) 25%, rgba(10, 15, 20, ${(appearance?.transparency ?? 0) / 100}) 100%)`
+              : `linear-gradient(to bottom, rgba(255, 255, 255, 1) 0%, rgba(255, 255, 255, 1) 25%, rgba(255, 255, 255, ${(appearance?.transparency ?? 0) / 100}) 100%)`,
+            backdropFilter: `blur(${appearance?.blur ?? 40}px)`,
+            WebkitBackdropFilter: `blur(${appearance?.blur ?? 40}px)`
+          }}
+        >
           <div className="flex items-center gap-3 min-w-0">
             <div className={`w-1.5 h-6 md:h-7 ${isDark ? 'bg-white' : 'bg-zinc-900'} rounded-full shrink-0 shadow-sm`} />
             <h2 className={`text-2xl md:text-3xl font-black tracking-tighter ${dynamicTextColor} select-none truncate`}>Profil Kamu</h2>
