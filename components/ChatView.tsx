@@ -602,6 +602,39 @@ const ChatView: React.FC<ChatViewProps> = ({
     imageUrl: null,
   });
 
+  // Media Preview Back Button Handler (Android / Browser Back)
+  const isMediaPreviewOpenRef = useRef(false);
+  useEffect(() => {
+    const isAnyModalOpen = Boolean(previewMedia || showProfilePreview || showGallery || imageInfoData.isOpen);
+
+    if (isAnyModalOpen) {
+      if (!isMediaPreviewOpenRef.current) {
+        isMediaPreviewOpenRef.current = true;
+        window.history.pushState({ isMediaPreview: true }, '');
+      }
+
+      const handleMediaPopState = () => {
+        isMediaPreviewOpenRef.current = false;
+        setPreviewMedia(null);
+        setShowProfilePreview(false);
+        setShowGallery(false);
+        setImageInfoData(prev => ({ ...prev, isOpen: false }));
+      };
+
+      window.addEventListener('popstate', handleMediaPopState);
+      return () => {
+        window.removeEventListener('popstate', handleMediaPopState);
+      };
+    } else {
+      if (isMediaPreviewOpenRef.current) {
+        isMediaPreviewOpenRef.current = false;
+        if (window.history.state && window.history.state.isMediaPreview) {
+          window.history.back();
+        }
+      }
+    }
+  }, [previewMedia, showProfilePreview, showGallery, imageInfoData.isOpen]);
+
   const [isRegeneratingVariation, setIsRegeneratingVariation] = useState<boolean>(false);
   const [regeneratingStatus, setRegeneratingStatus] = useState<string>('');
 
