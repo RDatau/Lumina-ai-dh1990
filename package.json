@@ -1,0 +1,70 @@
+{
+  "name": "(release-03)-lumina-ai-chat",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "main": "electron/main.cjs",
+  "scripts": {
+    "dev": "tsx server.ts",
+    "start": "node server.ts",
+    "build": "npx vite build",
+    "lint": "tsc --noEmit",
+    "preview": "npx vite preview",
+    "electron:dev": "concurrently \"npm run dev\" \"npx wait-on http://localhost:3000 && electron .\"",
+    "electron:build": "npm run build && npx electron-builder",
+    "android:sync": "npm run build && npx cap sync android",
+    "android:open": "npx cap open android"
+  },
+  "build": {
+    "appId": "com.lumina.ai",
+    "productName": "Lumina AI",
+    "directories": {
+      "output": "dist_electron"
+    },
+    "files": [
+      "dist/**/*",
+      "electron/**/*",
+      "package.json"
+    ],
+    "win": {
+      "target": "nsis",
+      "icon": "public/logo.png"
+    },
+    "mac": {
+      "target": "dmg",
+      "category": "public.app-category.utilities"
+    },
+    "linux": {
+      "target": "AppImage"
+    }
+  },
+  "dependencies": {
+    "@breezystack/lamejs": "^1.2.7",
+    "@capacitor/android": "^8.5.2",
+    "@capacitor/core": "^8.5.2",
+    "@google/genai": "^1.41.0",
+    "browser-id3-writer": "^6.3.1",
+    "cors": "^2.8.6",
+    "express": "^5.2.1",
+    "framer-motion": "^12.35.0",
+    "lamejs": "^1.2.1",
+    "lucide-react": "^0.575.0",
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4",
+    "tsx": "^4.23.15"
+  },
+  "devDependencies": {
+    "@capacitor/cli": "^8.5.2",
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.6",
+    "@types/node": "^22.14.0",
+    "@vitejs/plugin-react": "^5.0.0",
+    "concurrently": "^9.2.1",
+    "electron": "^41.0.3",
+    "electron-builder": "^26.8.1",
+    "electron-is-dev": "^3.0.1",
+    "typescript": "~5.8.2",
+    "vite": "^6.2.0",
+    "wait-on": "^9.0.4"
+  }
+}

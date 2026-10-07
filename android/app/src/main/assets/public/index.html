@@ -1,0 +1,219 @@
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="theme-color" content="#ffffff">
+    <meta name="color-scheme" content="light dark">
+    <meta name="description" content="Lumina - Teman ngobrol AI yang fleksibel dan seru.">
+    
+    <!-- PWA Meta Tags -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Lumina">
+    <meta name="application-name" content="Lumina">
+    <meta name="mobile-web-app-capable" content="yes">
+    
+    <title>Lumina AI</title>
+    
+    <link rel="manifest" href="./assets/manifest-DRoRVUA0.json">
+    <link rel="icon" type="image/svg+xml" href="./logo.svg">
+    <link rel="icon" type="image/png" sizes="192x192" href="https://i.postimg.cc/hvPPStyD/icon192.png">
+    <link rel="apple-touch-icon" href="https://i.postimg.cc/85Gz0HL7/icon.png">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+          theme: {
+            extend: {
+              colors: {
+                indigo: {
+                  50: 'color-mix(in srgb, rgb(var(--theme-color-rgb, 99, 102, 241)), white 98%)',
+                  100: 'color-mix(in srgb, rgb(var(--theme-color-rgb, 99, 102, 241)), white 95%)',
+                  200: 'color-mix(in srgb, rgb(var(--theme-color-rgb, 99, 102, 241)), white 90%)',
+                  300: 'color-mix(in srgb, rgb(var(--theme-color-rgb, 99, 102, 241)), white 80%)',
+                  400: 'color-mix(in srgb, rgb(var(--theme-color-rgb, 99, 102, 241)), white 60%)',
+                  500: 'rgb(var(--theme-color-rgb, 99, 102, 241))',
+                  600: 'color-mix(in srgb, rgb(var(--theme-color-rgb, 99, 102, 241)), black 20%)',
+                  700: 'color-mix(in srgb, rgb(var(--theme-color-rgb, 99, 102, 241)), black 40%)',
+                  800: 'color-mix(in srgb, rgb(var(--theme-color-rgb, 99, 102, 241)), black 60%)',
+                  900: 'color-mix(in srgb, rgb(var(--theme-color-rgb, 99, 102, 241)), black 80%)',
+                }
+              },
+              animation: {
+                'pulse-neon': 'pulse-neon 1.5s ease-in-out infinite',
+              }
+            }
+          }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        
+        :root {
+            --safe-area-inset-bottom: env(safe-area-inset-bottom, 0px);
+            --safe-area-inset-top: env(safe-area-inset-top, 0px);
+            --theme-color-rgb: 39, 39, 42;
+            --main-bg: #ffffff;
+            --main-text: #000000;
+            --glass-bg: rgba(255, 255, 255, 0.7);
+        }
+        
+        [data-theme='dark'] {
+            --main-bg: #0a0f14;
+            --main-text: #ffffff;
+            --glass-bg: rgba(15, 15, 15, 0.7);
+        }
+        
+        html, body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            height: 100dvh;
+            background-color: var(--main-bg);
+            color: var(--main-text);
+            font-family: 'Inter', sans-serif;
+            overflow: hidden;
+            position: fixed;
+            -webkit-tap-highlight-color: transparent;
+            /* Mencegah efek tarik-tarik layar (overscroll) global */
+            overscroll-behavior: none;
+            /* Matikan Text Selection */
+            user-select: none;
+            -webkit-user-select: none;
+            
+            /* Optimasi untuk High Refresh Rate (120Hz) */
+            text-rendering: optimizeLegibility;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            image-rendering: -webkit-optimize-contrast;
+            transition: background-color 0.5s ease, color 0.5s ease;
+        }
+        
+        /* Kecualikan input, textarea, dan elemen yang bisa diedit */
+        
+        input, textarea, [contenteditable="true"], .selectable {
+            user-select: text !important;
+            -webkit-user-select: text !important;
+        }
+        
+        /* Force GPU Acceleration untuk elemen utama */
+        
+        #root {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            transform: translateZ(0);
+            backface-visibility: hidden;
+            perspective: 1000;
+        }
+        
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 4px;
+            height: 4px;
+        }
+        
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: rgba(var(--theme-color-rgb), 0.3);
+            border-radius: 10px;
+        }
+        
+        /* Optimasi Animasi agar Smooth di 120Hz */
+        
+        @keyframes eq-1 { 0%, 100% { transform: scaleY(0.3); } 50% { transform: scaleY(1); } }
+        
+        @keyframes eq-2 { 0%, 100% { transform: scaleY(0.6); } 50% { transform: scaleY(0.3); } }
+        
+        @keyframes eq-3 { 0%, 100% { transform: scaleY(0.5); } 50% { transform: scaleY(0.8); } }
+        
+        .animate-eq-1 { 
+            animation: eq-1 0.6s cubic-bezier(0.4, 0, 0.2, 1) infinite; 
+            will-change: transform;
+            transform-origin: bottom;
+        }
+        
+        .animate-eq-2 { 
+            animation: eq-2 0.8s cubic-bezier(0.4, 0, 0.2, 1) infinite; 
+            will-change: transform;
+            transform-origin: bottom;
+        }
+        
+        .animate-eq-3 { 
+            animation: eq-3 0.7s cubic-bezier(0.4, 0, 0.2, 1) infinite; 
+            will-change: transform;
+            transform-origin: bottom;
+        }
+        
+        @keyframes pulse-neon {
+            0%, 100% { 
+                box-shadow: 0 0 5px rgba(var(--theme-color-rgb), 0.2), 0 0 10px rgba(var(--theme-color-rgb), 0.1); 
+                border-color: rgba(var(--theme-color-rgb), 0.3);
+                opacity: 0.8;
+            }
+            50% { 
+                box-shadow: 0 0 20px rgba(var(--theme-color-rgb), 0.5), 0 0 35px rgba(var(--theme-color-rgb), 0.3); 
+                border-color: rgba(var(--theme-color-rgb), 0.8);
+                opacity: 1;
+            }
+        }
+        
+        .animate-pulse-neon {
+            animation: pulse-neon 1.5s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+            will-change: box-shadow, border-color, opacity;
+        }
+        
+        @keyframes progress-loading {
+            0% { width: 0%; }
+            50% { width: 70%; }
+            100% { width: 100%; }
+        }
+        
+        .animate-progress-loading {
+            animation: progress-loading 3s ease-in-out infinite;
+        }
+        
+        .glass-menu {
+            background-color: var(--glass-bg, rgba(15, 15, 15, 0.95));
+            backdrop-filter: blur(40px) saturate(180%);
+            -webkit-backdrop-filter: blur(40px) saturate(180%);
+        }
+        
+        .glass-dark {
+            background-color: var(--glass-bg-dark, rgba(10, 10, 10, 0.7));
+            backdrop-filter: blur(25px) saturate(160%);
+            -webkit-backdrop-filter: blur(25px) saturate(160%);
+        }
+        
+        /* Midnight Blue Style Background */
+        
+        .google-bg-light {
+            background: radial-gradient(circle at 50% 50%, #ffffff 0%, #f8f9fa 100%);
+        }
+        
+        .google-bg-dark {
+            background-color: #0a0f14;
+        }
+    </style>
+    <link rel="stylesheet" href="/index.css">
+  <script type="module" crossorigin src="./assets/index-DX_wsp6Y.js"></script>
+</head>
+<body>
+    <div id="root"></div>
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js')
+                    .then(reg => console.log('Service Worker registered:', reg.scope))
+                    .catch(err => console.error('Service Worker failed:', err));
+            });
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,47 @@
+{
+  "name": "Lumina AI: Teman Ngobrol Pintar & Nakal",
+  "short_name": "Lumina AI",
+  "description": "Lumina AI - Teman ngobrol AI yang fleksibel dan seru.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#000000",
+  "theme_color": "#000000",
+  "orientation": "portrait",
+  "lang": "id",
+  "categories": ["social", "entertainment", "productivity"],
+  "icons": [
+    {
+      "purpose": "any",
+      "src": "https://i.postimg.cc/hvPPStyD/icon192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "purpose": "any",
+      "src": "https://i.postimg.cc/85Gz0HL7/icon.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    },
+    {
+      "purpose": "maskable",
+      "src": "https://i.postimg.cc/hvPPStyD/icon192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "purpose": "maskable",
+      "src": "https://i.postimg.cc/85Gz0HL7/icon.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ],
+"screenshots": [
+    {
+      "src": "https://images.unsplash.com/photo-1550684848-fac1c5b4e853?q=80&w=1080&h=1920&fit=crop&fm=png",
+      "sizes": "1080x1920",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Tampilan Chat Lumina"
+    }
+  ]
+}

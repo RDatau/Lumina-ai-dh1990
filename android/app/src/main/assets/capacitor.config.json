@@ -1,0 +1,20 @@
+{
+	"appId": "com.lumina.aichat",
+	"appName": "Lumina AI Chat",
+	"webDir": "dist",
+	"bundledWebRuntime": false,
+	"server": {
+		"androidScheme": "https",
+		"cleartext": true
+	},
+	"plugins": {
+		"SplashScreen": {
+			"launchShowDuration": 0
+		}
+	},
+	"android": {
+		"allowMixedContent": true,
+		"captureInput": true,
+		"backgroundColor": "#18181b"
+	}
+}

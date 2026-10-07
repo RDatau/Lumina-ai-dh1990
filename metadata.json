@@ -1,0 +1,12 @@
+{
+  "name": "dh1990-Lumina AI",
+  "description": "Asisten AI dengan kepribadian fleksibel, UI glassmorphism yang elegan, dan kemampuan voice/chat real-time yang seru. Dibuat oleh Ryan Datau.",
+  "author": "Ryan Datau",
+  "requestFramePermissions": [
+    "camera",
+    "microphone"
+  ],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
