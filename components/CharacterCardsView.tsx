@@ -265,7 +265,7 @@ const CharacterCardsView: React.FC<CharacterCardsViewProps> = ({
                       : `rgba(255, 255, 255, ${(appearance?.transparency ?? 0) / 100})`),
                 backdropFilter: `blur(${appearance?.blur ?? 40}px)`,
                 WebkitBackdropFilter: `blur(${appearance?.blur ?? 40}px)`,
-                border: 'none'
+                border: isMobile ? 'none' : (isBackgroundDark ? '1px solid rgba(255, 255, 255, 0.12)' : '1px solid rgba(0, 0, 0, 0.08)')
               }}
             >
             <div className="flex items-center gap-3 min-w-0">
