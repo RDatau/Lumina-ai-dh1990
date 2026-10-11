@@ -838,9 +838,9 @@ export const generateWithHuggingFaceSpace = async (
     }
   }
 
-  // Kembalikan preview jangkar ke Image 1 (Foto Profil Karakter) agar user melihat foto profil sebagai identitas utama
+  // Seluruh referensi gambar terunggah. Menghubungkan ke Space ZeroGPU...
   if (inputImage) {
-    onStatusUpdate?.("Seluruh referensi gambar terunggah. Menghubungkan ke Space ZeroGPU...", { slot: 1, label: "Image 1: Base (Identitas Karakter)", url: inputImage });
+    onStatusUpdate?.("Seluruh referensi gambar terunggah. Menghubungkan ke Space ZeroGPU...");
   }
 
   // Bangun payload data dinamis berdasarkan skema komponen Space

@@ -2627,6 +2627,8 @@ Retain the EXACT SAME LOCATION/SETTING with previous PAP (${analyzedRoom}). Char
           onStatusUpdate?.("Menyelaraskan aspek rasio referensi tambahan...");
           for (let i = 0; i < additionalImages.length; i++) {
             additionalImages[i] = await matchAspectRatioWithBlackFill(baseImage, additionalImages[i]);
+            const sNum = 3 + i;
+            onStatusUpdate?.(`Menyelaraskan aspek rasio referensi (Slot ${sNum})...`, { slot: sNum, label: sNum === 4 ? "Image 4: PAP 1 (Penunjang Detail Pakaian & Ruangan)" : `Image ${sNum}: Ruangan & PAP Sebelumnya`, url: additionalImages[i] });
           }
         }
       }
