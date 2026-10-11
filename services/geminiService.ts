@@ -1284,7 +1284,7 @@ export const generateAgentResponse = async (
   }, effectiveUserProfile);
 };
 
-const previousPapAnalysisCache = new Map<string, { outfitPrompt: string; roomPrompt: string; placementSurface?: string; isNude: boolean; isCloseUp: boolean }>();
+const previousPapAnalysisCache = new Map<string, { outfitPrompt: string; roomPrompt: string; placementSurface?: string; isNude: boolean }>();
 
 export const derivePlacementSurface = (roomStr: string): string => {
   if (!roomStr) return "on a suitable nearby surface in the setting";
@@ -1518,7 +1518,7 @@ export const analyzePreviousPapImage = async (
   outfitHint?: string, 
   userProfile?: UserProfile,
   onStatusUpdate?: (msg: string) => void
-): Promise<{ outfitPrompt: string; roomPrompt: string; placementSurface: string; isNude: boolean; isCloseUp: boolean }> => {
+): Promise<{ outfitPrompt: string; roomPrompt: string; placementSurface: string; isNude: boolean }> => {
   const cacheKey = `${imageBase64.length}_${imageBase64.slice(0, 100)}`;
   if (previousPapAnalysisCache.has(cacheKey)) {
     const cached = previousPapAnalysisCache.get(cacheKey)!;
@@ -1526,8 +1526,7 @@ export const analyzePreviousPapImage = async (
       outfitPrompt: cached.outfitPrompt,
       roomPrompt: cached.roomPrompt,
       placementSurface: cached.placementSurface || derivePlacementSurface(cached.roomPrompt),
-      isNude: cached.isNude,
-      isCloseUp: cached.isCloseUp
+      isNude: cached.isNude
     };
   }
 
@@ -1544,12 +1543,11 @@ export const analyzePreviousPapImage = async (
             role: 'user',
             parts: [
               {
-                text: `Analyze this image with 100% forensic precision. Return a strict valid JSON object with EXACTLY five fields:
+                text: `Analyze this image with 100% forensic precision. Return a strict valid JSON object with EXACTLY four fields:
 1. "outfitPrompt": Describe ONLY the exact clothes she/he is wearing in this image. Include exact primary color(s), fabric(s), textures, motif, corak, garment type, and whether it is a 1-piece (dress/daster), 2-piece (top + bottom, or 2-piece lingerie/bikini), or gamis+hijab. (e.g. "a navy blue floral silk daster nightdress" or "a white sleeveless ribbed crop top and black denim shorts"). DO NOT comment on her/his pose, face, body, or background. If she is already completely unclothed/naked/topless/bare skin, output strictly "unclothed, natural bare skin".
 2. "roomPrompt": Describe ONLY the room interior/location setting: environment, background, bed, sheets, headboard, wall colors, lighting, or outdoor landscape (e.g. "an intimate bedroom with warm bedside lamp lighting" or "a tropical sunny beach with white sand and blue ocean waves"). DO NOT mention the person or clothes.
 3. "placementSurface": Suggest the most logical, natural nearby surface or spot in THIS SPECIFIC environment where removed clothes would be set aside (e.g. "on one corner of the bed frame", "on a nearby chair", "on a beach towel on the sand", "on a lounge chair by the pool", "on a sofa", "on the side table").
 4. "isNude": A boolean (true if she is completely undressed, topless, or unclothed; false if she is wearing regular clothes).
-5. "isCloseUp": A boolean (true if this image is a close-up, face portrait, or tight crop where clothing details and room background are cropped out or not fully visible; false if full-body or medium shot showing clear clothing and room details).
 
 Return ONLY raw JSON, with no markdown code fences or backticks.`
               },
@@ -1580,8 +1578,7 @@ Return ONLY raw JSON, with no markdown code fences or backticks.`
         outfitPrompt,
         roomPrompt,
         placementSurface,
-        isNude: !!parsed.isNude,
-        isCloseUp: !!parsed.isCloseUp
+        isNude: !!parsed.isNude
       };
     }, userProfile, onStatusUpdate);
 
@@ -1596,8 +1593,7 @@ Return ONLY raw JSON, with no markdown code fences or backticks.`
       outfitPrompt: fallbackOutfit,
       roomPrompt: fallbackRoom,
       placementSurface: derivePlacementSurface(fallbackRoom),
-      isNude,
-      isCloseUp: false
+      isNude
     };
     return fallback;
   }
@@ -1940,7 +1936,7 @@ export const generatePAP = async (
   const isExplicitOutfitChange = !isExplicitUndress && (outfitChangeRegex.test(lowCaption) || outfitChangeKeywords.some(kw => lowCaption.includes(kw)));
 
   // 1. Analisa PAP sebelumnya (Pakaian murni & Ruangan murni) atau siapkan First PAP Context
-  let previousPapAnalysis: { outfitPrompt: string; roomPrompt: string; placementSurface?: string; isNude: boolean; isCloseUp?: boolean } | null = null;
+  let previousPapAnalysis: { outfitPrompt: string; roomPrompt: string; placementSurface?: string; isNude: boolean } | null = null;
   if (hasPreviousPap && latestPap?.image) {
     onStatusUpdate?.("Menganalisa pakaian dan ruangan dari PAP sebelumnya...");
     previousPapAnalysis = await analyzePreviousPapImage(latestPap.image, latestPap.outfit, effectiveUserProfile, onStatusUpdate);
@@ -2116,7 +2112,7 @@ ${identityNote}` });
 
     const oldestPap = papsInHistory.length > 1 ? papsInHistory[papsInHistory.length - 1] : null;
     const hasOldestPap = !!oldestPap?.image && oldestPap.image !== latestPap?.image;
-    const shouldIncludeOldestPap = hasOldestPap && (previousPapAnalysis?.isCloseUp || papsInHistory.length >= 2);
+    const shouldIncludeOldestPap = hasOldestPap && papsInHistory.length >= 2;
 
     if (hasOutfitRef) {
       // 1. Jika ada upload referensi dari user -> Masuk sebagai Image 2 (Slot 2)
@@ -2139,12 +2135,12 @@ ${identityNote}` });
         translatorParts.push({ inlineData: { mimeType, data } });
       }
 
-      // 3. Jika PAP sebelumnya close up atau ada PAP 1, masukkan PAP 1 sebagai Image 4 (Slot 4) sebagai referensi penunjang detail pakaian dan ruangan
+      // 3. Selalu masukkan PAP 1 sebagai Image 4 (Slot 4) sebagai referensi penunjang detail pakaian dan ruangan awal
       if (shouldIncludeOldestPap && oldestPap?.image) {
         const [oldHeader, oldData] = oldestPap.image.split(',');
         const oldMimeType = oldHeader.split(':')[1]?.split(';')[0] || 'image/jpeg';
         translatorParts.push({ text: `REFERENCE IMAGE 4 (SUPPLEMENTARY REFERENCE - PAP 1 INITIAL FULL DETAILED OUTFIT & ROOM):
-1. Because the recent PAP (Image 3) is a close-up or cropped, this image (PAP 1) provides the comprehensive initial full outfit and room details.
+1. As the initial PAP, this image (PAP 1) provides comprehensive full outfit and room details to serve as a reliable anchor.
 2. DETAILED OUTFIT & ROOM ANCHOR: Faithfully reference the exact clothing details, fabric textures, and full room/environment setting from this initial PAP to prevent loss of detail or hallucination.` });
         translatorParts.push({ inlineData: { mimeType: oldMimeType, data: oldData } });
       }
@@ -2174,12 +2170,12 @@ Retain the EXACT SAME LOCATION/SETTING with previous PAP (${analyzedRoom}). Char
         }
         translatorParts.push({ inlineData: { mimeType, data } });
 
-        // JIKA PAP SEBELUMNYA CLOSE UP ATAU ADA PAP 1, MASUKKAN PAP 1 SEBAGAI IMAGE 3 (SLOT 3) SEBAGAI REFERENSI PENUNJANG DETAIL PAKAIAN DAN RUANGAN
+        // SELALU MASUKKAN PAP 1 SEBAGAI IMAGE 3 (SLOT 3) SEBAGAI REFERENSI PENUNJANG DETAIL PAKAIAN DAN RUANGAN AWAL
         if (shouldIncludeOldestPap && oldestPap?.image && !isExplicitOutfitChange && !isEffectiveUndress) {
           const [oldHeader, oldData] = oldestPap.image.split(',');
           const oldMimeType = oldHeader.split(':')[1]?.split(';')[0] || 'image/jpeg';
           translatorParts.push({ text: `REFERENCE IMAGE 3 (SUPPLEMENTARY REFERENCE - PAP 1 INITIAL FULL DETAILED OUTFIT & ROOM):
-1. Because the recent PAP (Image 2) is a close-up or cropped, this image (PAP 1) provides the comprehensive initial full outfit and room details.
+1. As the initial PAP, this image (PAP 1) provides comprehensive full outfit and room details to serve as a reliable anchor.
 2. DETAILED OUTFIT & ROOM ANCHOR: Faithfully reference the exact clothing details, fabric textures, and full room/environment setting from this initial PAP to prevent loss of detail or hallucination.` });
           translatorParts.push({ inlineData: { mimeType: oldMimeType, data: oldData } });
         } else if (fullBodyPap?.image && fullBodyPap.image !== latestPap.image && !isExplicitOutfitChange && !isEffectiveUndress) {
