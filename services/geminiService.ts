@@ -2100,6 +2100,7 @@ export const generatePAP = async (
     if (config.profilePic && config.profilePic.startsWith('data:')) {
       const [header, data] = config.profilePic.split(',');
       const mimeType = header.split(':')[1].split(';')[0];
+      onStatusUpdate?.("Menyiapkan Image 1 (Biometrik)...", { slot: 1, label: "Image 1: Base / Target (Identitas)", url: config.profilePic });
       const identityNote = hasPreviousPap
         ? `- ABSOLUTE STRICT ROOM & BACKGROUND ISOLATION FOR IMAGE 1: DO NOT use Image 1 for room interior, background setting, wall tone, furniture, clothing details, or discarded clothes! Image 1 is strictly an isolated crop for facial features and biometric identity ONLY. The room/setting MUST strictly come from conversation context or previous PAP (${analyzedRoom}), NEVER from Image 1!`
         : `- ABSOLUTE STRICT ROOM & BACKGROUND ISOLATION FOR IMAGE 1: DO NOT use Image 1 for room interior, background setting, wall tone, or furniture! Image 1 is strictly an isolated crop for facial features and biometric identity ONLY. The room/setting MUST strictly come from conversation context (${firstPapContext ? firstPapContext.roomSetting : 'chat context'}), NEVER from Image 1.`;
@@ -2119,6 +2120,7 @@ ${identityNote}` });
       outfitImages.forEach((img, idx) => {
         const [header, data] = img.data.split(',');
         const mimeType = header.split(':')[1].split(';')[0];
+        onStatusUpdate?.("Menyiapkan Image 2 (Referensi)...", { slot: 2, label: "Image 2: Referensi (Pose/Outfit)", url: img.data });
         translatorParts.push({ text: `REFERENCE IMAGE 2 (USER UPLOAD - ${isPoseCopyRequest ? 'POSE REFERENCE TO COPY' : 'NEW OUTFIT / DRESS TO WEAR'}):` });
         translatorParts.push({ inlineData: { mimeType, data } });
       });
@@ -2127,6 +2129,7 @@ ${identityNote}` });
       if (hasPreviousPap && latestPap?.image) {
         const [header, data] = latestPap.image.split(',');
         const mimeType = header.split(':')[1].split(';')[0];
+        onStatusUpdate?.("Menyiapkan Image 3 (PAP Sebelumnya)...", { slot: 3, label: "Image 3: Kontinuitas Ruangan & Pakaian", url: latestPap.image });
         translatorParts.push({ text: `REFERENCE IMAGE 3 (PREVIOUS PAP - EXACT SAME LOCATION CONTINUITY & DISCARDED CLOTHES REFERENCE):
 1. EXACT SAME LOCATION CONTINUITY: Retain the EXACT SAME LOCATION/SETTING with previous PAP (${analyzedRoom}).
 2. DISCARDED CLOTHES REFERENCE: If Character 1 is changing into the new outfit in Image 2 or stripping, her/his previous outfit was: ${analyzedOutfit}.
@@ -2139,6 +2142,7 @@ ${identityNote}` });
       if (shouldIncludeOldestPap && oldestPap?.image) {
         const [oldHeader, oldData] = oldestPap.image.split(',');
         const oldMimeType = oldHeader.split(':')[1]?.split(';')[0] || 'image/jpeg';
+        onStatusUpdate?.("Menyiapkan Image 4 (PAP 1 Penunjang)...", { slot: 4, label: "Image 4: PAP 1 (Penunjang Detail Pakaian & Ruangan)", url: oldestPap.image });
         translatorParts.push({ text: `REFERENCE IMAGE 4 (SUPPLEMENTARY REFERENCE - PAP 1 INITIAL FULL DETAILED OUTFIT & ROOM):
 1. As the initial PAP, this image (PAP 1) provides comprehensive full outfit and room details to serve as a reliable anchor.
 2. DETAILED OUTFIT & ROOM ANCHOR: Faithfully reference the exact clothing details, fabric textures, and full room/environment setting from this initial PAP to prevent loss of detail or hallucination.` });
@@ -2149,6 +2153,7 @@ ${identityNote}` });
       if (hasPreviousPap && latestPap?.image) {
         const [header, data] = latestPap.image.split(',');
         const mimeType = header.split(':')[1].split(';')[0];
+        onStatusUpdate?.("Menyiapkan Image 2 (PAP Sebelumnya)...", { slot: 2, label: "Image 2: PAP Sebelumnya (Kontinuitas)", url: latestPap.image });
         if (isExplicitUndress) {
           if (!isPreviousPapNude) {
             translatorParts.push({ text: `REFERENCE IMAGE 2 (PREVIOUS PAP - EXACT SAME LOCATION CONTINUITY & DISCARDED OUTFIT REFERENCE):
@@ -2174,6 +2179,7 @@ Retain the EXACT SAME LOCATION/SETTING with previous PAP (${analyzedRoom}). Char
         if (shouldIncludeOldestPap && oldestPap?.image && !isExplicitOutfitChange && !isEffectiveUndress) {
           const [oldHeader, oldData] = oldestPap.image.split(',');
           const oldMimeType = oldHeader.split(':')[1]?.split(';')[0] || 'image/jpeg';
+          onStatusUpdate?.("Menyiapkan Image 3 (PAP 1 Penunjang)...", { slot: 3, label: "Image 3: PAP 1 (Penunjang Detail Pakaian & Ruangan)", url: oldestPap.image });
           translatorParts.push({ text: `REFERENCE IMAGE 3 (SUPPLEMENTARY REFERENCE - PAP 1 INITIAL FULL DETAILED OUTFIT & ROOM):
 1. As the initial PAP, this image (PAP 1) provides comprehensive full outfit and room details to serve as a reliable anchor.
 2. DETAILED OUTFIT & ROOM ANCHOR: Faithfully reference the exact clothing details, fabric textures, and full room/environment setting from this initial PAP to prevent loss of detail or hallucination.` });
@@ -2181,6 +2187,7 @@ Retain the EXACT SAME LOCATION/SETTING with previous PAP (${analyzedRoom}). Char
         } else if (fullBodyPap?.image && fullBodyPap.image !== latestPap.image && !isExplicitOutfitChange && !isEffectiveUndress) {
           const [fbHeader, fbData] = fullBodyPap.image.split(',');
           const fbMimeType = fbHeader.split(':')[1]?.split(';')[0] || 'image/jpeg';
+          onStatusUpdate?.("Menyiapkan Image 3 (Full-Body)...", { slot: 3, label: "Image 3: Full-Body Outfit Reference", url: fullBodyPap.image });
           translatorParts.push({ text: `REFERENCE IMAGE 3 (FULL-BODY OUTFIT & COMPLEMENTARY GARMENT REFERENCE):
 1. OUTFIT PATTERN CONTINUITY: Reference Image 3 displays the full-body or complementary view of the same continuous outfit (${analyzedOutfit}).
 2. COMPLEMENTARY GARMENT DETAILS: Faithfully copy and match any missing upper garment/top/neckline, lower skirt/pants length, fabric textures, embroidery, motifs, and hem details from Reference Image 3 when generating the new shot!` });
