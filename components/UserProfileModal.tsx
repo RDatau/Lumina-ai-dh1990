@@ -200,13 +200,9 @@ const UserProfileModal: React.FC<UserProfileModalProps> = ({
   };
 
   const headerStyle = {
-    background: isMobile 
-      ? (isDark 
-          ? `linear-gradient(to bottom, rgba(10, 15, 20, 1) 0%, rgba(10, 15, 20, 1) 25%, rgba(10, 15, 20, ${(appearance?.transparency ?? 0) / 100}) 100%)`
-          : `linear-gradient(to bottom, rgba(255, 255, 255, 1) 0%, rgba(255, 255, 255, 1) 25%, rgba(255, 255, 255, ${(appearance?.transparency ?? 0) / 100}) 100%)`)
-      : (isDark 
-          ? `rgba(10, 15, 20, ${(appearance?.transparency ?? 0) / 100})`
-          : `rgba(255, 255, 255, ${(appearance?.transparency ?? 0) / 100})`),
+    background: isDark 
+      ? `rgba(10, 15, 20, ${(appearance?.transparency ?? 0) / 100})`
+      : `rgba(255, 255, 255, ${(appearance?.transparency ?? 0) / 100})`,
     backdropFilter: (appearance?.blur ?? 40) === 0 ? 'none' : `blur(${appearance?.blur ?? 40}px)`,
     WebkitBackdropFilter: (appearance?.blur ?? 40) === 0 ? 'none' : `blur(${appearance?.blur ?? 40}px)`
   };

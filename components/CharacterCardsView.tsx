@@ -256,16 +256,12 @@ const CharacterCardsView: React.FC<CharacterCardsViewProps> = ({
             <header 
               className={`flex items-center justify-between min-h-[56px] shadow-2xl transition-all duration-300 rounded-none md:rounded-full ${isSidebar ? 'p-1.5 px-3' : 'px-4 pt-[max(0.75rem,env(safe-area-inset-top))] pb-2 md:px-6'}`} 
               style={{
-                background: isMobile 
-                  ? (isBackgroundDark 
-                      ? `linear-gradient(to bottom, rgba(10, 15, 20, 1) 0%, rgba(10, 15, 20, 1) 25%, rgba(10, 15, 20, ${(appearance?.transparency ?? 0) / 100}) 100%)`
-                      : `linear-gradient(to bottom, rgba(255, 255, 255, 1) 0%, rgba(255, 255, 255, 1) 25%, rgba(255, 255, 255, ${(appearance?.transparency ?? 0) / 100}) 100%)`)
-                  : (isBackgroundDark 
-                      ? `rgba(10, 15, 20, ${(appearance?.transparency ?? 0) / 100})`
-                      : `rgba(255, 255, 255, ${(appearance?.transparency ?? 0) / 100})`),
-                backdropFilter: `blur(${appearance?.blur ?? 40}px)`,
-                WebkitBackdropFilter: `blur(${appearance?.blur ?? 40}px)`,
-                border: isMobile ? 'none' : (isBackgroundDark ? '1px solid rgba(255, 255, 255, 0.12)' : '1px solid rgba(0, 0, 0, 0.08)')
+                background: isBackgroundDark 
+                  ? `rgba(10, 15, 20, ${(appearance?.transparency ?? 0) / 100})`
+                  : `rgba(255, 255, 255, ${(appearance?.transparency ?? 0) / 100})`,
+                backdropFilter: (appearance?.blur ?? 40) === 0 ? 'none' : `blur(${appearance?.blur ?? 40}px)`,
+                WebkitBackdropFilter: (appearance?.blur ?? 40) === 0 ? 'none' : `blur(${appearance?.blur ?? 40}px)`,
+                border: isBackgroundDark ? '1px solid rgba(255, 255, 255, 0.12)' : '1px solid rgba(0, 0, 0, 0.08)'
               }}
             >
             <div className="flex items-center gap-3 min-w-0">

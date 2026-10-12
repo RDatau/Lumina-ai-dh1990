@@ -292,15 +292,13 @@ const ProfileSelectorView: React.FC<ProfileSelectorViewProps> = ({
       >
         {/* Header Section */}
         <div 
-          className={`flex-shrink-0 px-4 pt-[max(0.75rem,env(safe-area-inset-top))] pb-3 md:px-6 relative z-20 ${isMobile ? 'shadow-lg' : ''}`}
+          className={`flex-shrink-0 px-4 pt-[max(0.75rem,env(safe-area-inset-top))] pb-3 md:px-6 relative z-20 shadow-lg`}
           style={{
-            background: isMobile 
-              ? (isBackgroundDark 
-                  ? `linear-gradient(to bottom, rgba(10, 15, 20, 1) 0%, rgba(10, 15, 20, 1) 25%, rgba(10, 15, 20, ${(appearance?.transparency ?? 0) / 100}) 100%)`
-                  : `linear-gradient(to bottom, rgba(255, 255, 255, 1) 0%, rgba(255, 255, 255, 1) 25%, rgba(255, 255, 255, ${(appearance?.transparency ?? 0) / 100}) 100%)`)
-              : 'transparent',
-            backdropFilter: isMobile ? `blur(${appearance?.blur ?? 40}px)` : 'none',
-            WebkitBackdropFilter: isMobile ? `blur(${appearance?.blur ?? 40}px)` : 'none'
+            background: isBackgroundDark 
+              ? `rgba(10, 15, 20, ${(appearance?.transparency ?? 0) / 100})`
+              : `rgba(255, 255, 255, ${(appearance?.transparency ?? 0) / 100})`,
+            backdropFilter: (appearance?.blur ?? 40) === 0 ? 'none' : `blur(${appearance?.blur ?? 40}px)`,
+            WebkitBackdropFilter: (appearance?.blur ?? 40) === 0 ? 'none' : `blur(${appearance?.blur ?? 40}px)`
           }}
         >
           <div className="flex items-center justify-between mb-4">

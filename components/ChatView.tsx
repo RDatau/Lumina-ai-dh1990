@@ -3058,7 +3058,7 @@ const ChatView: React.FC<ChatViewProps> = ({
             <textarea 
               ref={chatTextareaRef}
               rows={1}
-              placeholder={`Bisikin sesuatu ke ${config.name}...`} 
+              placeholder={`Pesan`} 
               className={`flex-1 bg-transparent outline-none py-2.5 text-sm font-semibold ${dynamicTextColor} placeholder:${dynamicMutedTextColor} resize-none max-h-32 min-h-[40px] overflow-y-auto custom-scrollbar leading-relaxed`} 
               value={inputText} 
               onChange={e => {
