@@ -1467,6 +1467,8 @@ export const cleanRawCaptionToPureGarment = (text: string): string => {
     .replace(/,\s*(?:rambut|ekspresi|wajah|mata|bibir|tangan|kaki|posisi|pose|sambil|dengan\s+senyum|tatapan|pandangan|memegang|di\s+depan\s+cermin|memotret)[\s\S]*/i, '')
     .replace(/\b(?:rambut|ekspresi|wajah|mata|bibir|tangan|kaki|posisi|pose|sambil|dengan\s+senyum|tatapan|pandangan|memegang\s+ponsel|di\s+depan\s+cermin|memotret\s+bayangan)[\s\S]*/i, '')
     .replace(/[()]/g, '')
+    .replace(/\b(?:2|two|3|three)\s*-?\s*pieces?\b/gi, '')
+    .replace(/\b2-piece\b/gi, '')
     .trim();
 
   // Terjemahkan atau rapikan kata kunci busana bahasa Indonesia ke bahasa Inggris standar prompt
@@ -1544,7 +1546,7 @@ export const analyzePreviousPapImage = async (
             parts: [
               {
                 text: `Analyze this image with 100% forensic precision. Return a strict valid JSON object with EXACTLY four fields:
-1. "outfitPrompt": Describe ONLY the exact clothes she/he is wearing in this image. Include exact primary color(s), fabric(s), textures, motif, corak, garment type, and whether it is a 1-piece (dress/daster), 2-piece (top + bottom, or 2-piece lingerie/bikini), or gamis+hijab. (e.g. "a navy blue floral silk daster nightdress" or "a white sleeveless ribbed crop top and black denim shorts"). DO NOT comment on her/his pose, face, body, or background. If she is already completely unclothed/naked/topless/bare skin, output strictly "unclothed, natural bare skin".
+1. "outfitPrompt": Describe ONLY the exact clothes she/he is wearing in this image. Include exact primary color(s), fabric(s), textures, motif, corak, and garment type (e.g. "a white sleeveless ribbed crop top and one pair of light blue denim jeans"). STRICT QUANTITY RULE: Describe each garment as strictly ONE single piece or item (e.g., "one white crop top" or "one pair of light blue denim jeans"). NEVER include words like "2-piece", "two-piece", or plural duplicate counts in outfitPrompt. DO NOT comment on her/his pose, face, body, or background. If she is already completely unclothed/naked/topless/bare skin, output strictly "unclothed, natural bare skin".
 2. "roomPrompt": Describe ONLY the room interior/location setting: environment, background, bed, sheets, headboard, wall colors, lighting, or outdoor landscape (e.g. "an intimate bedroom with warm bedside lamp lighting" or "a tropical sunny beach with white sand and blue ocean waves"). DO NOT mention the person or clothes.
 3. "placementSurface": Suggest the most logical, natural nearby surface or spot in THIS SPECIFIC environment where removed clothes would be set aside (e.g. "on one corner of the bed frame", "on a nearby chair", "on a beach towel on the sand", "on a lounge chair by the pool", "on a sofa", "on the side table").
 4. "isNude": A boolean (true if she is completely undressed, topless, or unclothed; false if she is wearing regular clothes).
