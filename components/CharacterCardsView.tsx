@@ -424,8 +424,7 @@ const CharacterCardsView: React.FC<CharacterCardsViewProps> = ({
                     </div>
                   )}
 
-                  {/* Gradient Overlay - More dramatic */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/40 to-transparent opacity-80 group-hover:opacity-90 transition-opacity duration-500" />
+                   {/* Gradient removed */}
 
                   {/* Content - Glassmorphism style */}
                   <div className={`absolute bottom-0 left-0 right-0 p-2 pb-3 ${!isSidebar ? 'translate-y-2 group-hover:translate-y-0' : ''} transition-transform duration-500`}>

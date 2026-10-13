@@ -794,7 +794,14 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
               return (
                 <div className="space-y-4">
                   {/* Global Indicator Banner */}
-                  <div className={`p-3 rounded-xl border ${dynamicBorderColor} bg-gradient-to-r from-indigo-500/10 via-purple-500/10 to-pink-500/10 flex items-center gap-3 shadow-sm`}>
+                  <div 
+                    className={`p-3 rounded-xl border ${dynamicBorderColor} flex items-center gap-3 shadow-sm`}
+                    style={{
+                      backgroundColor: isBackgroundDark ? `rgba(10, 15, 20, ${(appearance?.transparency ?? 0) / 100})` : `rgba(255, 255, 255, ${(appearance?.transparency ?? 0) / 100})`,
+                      backdropFilter: (appearance?.blur ?? 40) === 0 ? 'none' : `blur(${appearance?.blur ?? 40}px)`,
+                      WebkitBackdropFilter: (appearance?.blur ?? 40) === 0 ? 'none' : `blur(${appearance?.blur ?? 40}px)`
+                    }}
+                  >
                     <div className="p-2 rounded-lg bg-indigo-500/20 text-indigo-400 flex-shrink-0">
                       <Globe className="w-4 h-4 animate-pulse" />
                     </div>

@@ -324,11 +324,11 @@ const uploadToGradio = async (spaceHost: string, dataUrl: string, token?: string
       } catch (err) {}
     }
   } catch (err) {
-    console.warn("[HF-Upload] Upload error:", err);
+    console.warn("[HF-Upload] Upload warning, falling back to dataUrl:", err);
   }
 
-  // Jika Space menolak upload, lempar error jelas alih-alih dataUrl mentah yang ditolak Gradio modern
-  throw new Error("Gagal mengunggah foto referensi ke server Hugging Face Space. Pastikan URL Space aktif dan dapat diakses.");
+  // Fallback: kembalikan dataUrl langsung jika upload endpoint gagal/tidak dapat diakses
+  return dataUrl;
 };
 
 /**
