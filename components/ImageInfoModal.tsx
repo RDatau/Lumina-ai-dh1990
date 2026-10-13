@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { analyzePreviousPapImage } from '../services/geminiService';
+import { analyzePreviousPapImage, extractGarmentParts } from '../services/geminiService';
 
 interface ImageInfoModalProps {
   isOpen: boolean;
@@ -35,6 +35,7 @@ export const ImageInfoModal: React.FC<ImageInfoModalProps> = ({
   const [visionAnalysis, setVisionAnalysis] = useState<{
     outfitPrompt: string;
     roomPrompt: string;
+    placementSurface: string;
     isNude: boolean;
   } | null>(null);
   const [isAnalyzingVision, setIsAnalyzingVision] = useState<boolean>(false);
@@ -304,23 +305,33 @@ export const ImageInfoModal: React.FC<ImageInfoModalProps> = ({
     return 'Kamar tidur bernuansa intim, kasur, sprei, dan pencahayaan hangat';
   };
 
+  const extractDressGarment = (fullText: string): string | null => {
+    const dressMatch = fullText.match(/\b[^,.]*?(?:dress|daster|gamis|onesie|bodysuit|gown|nightdress|nightgown|slip|robe|piyama|pajamas)[^,.]*?/i);
+    return dressMatch ? dressMatch[0].trim() : null;
+  };
+
   const parsedDetails = extractGarmentAndRoomDetails(outfit, imagePrompt, caption);
+
+  const rawOutfitSource = visionAnalysis?.outfitPrompt || outfit || caption || imagePrompt || '';
+  const garmentParts = extractGarmentParts(rawOutfitSource);
 
   const effectiveDetails = visionAnalysis ? {
     topGarment: visionAnalysis.isNude 
       ? 'Dilepas / Tanpa Atasan (Bare Skin)' 
-      : visionAnalysis.outfitPrompt,
+      : (garmentParts.isDress ? 'Gaun Terusan (1-Piece Dress / Gamis / Daster)' : garmentParts.topGarment),
     bottomGarment: visionAnalysis.isNude 
       ? 'Dilepas / Tanpa Bawahan (Bare Skin)' 
-      : (/\b(?:dress|daster|gamis|onesie|bodysuit|gown|nightdress|nightgown|slip|robe)\b/i.test(visionAnalysis.outfitPrompt) && !/\b(?:shorts|pants|jeans|skirt|celana|rok|pajamas|piyama)\b/i.test(visionAnalysis.outfitPrompt)
-          ? 'Terhubung 1-Piece (Gaun Tidur Satin / Slip Nightdress)'
-          : (/\b(?:pajamas|piyama)\b/i.test(visionAnalysis.outfitPrompt)
-              ? 'Celana Piyama Satin Senada'
-              : (extractBottomGarment(visionAnalysis.outfitPrompt) || 'Celana / Bawahan Senada'))),
+      : (garmentParts.isDress ? 'Terintegrasi dalam Gaun Terusan' : garmentParts.bottomGarment),
+    dressGarment: visionAnalysis.isNude 
+      ? 'Dilepas (Bare Skin)' 
+      : (garmentParts.isDress ? garmentParts.dressGarment : 'Tidak Ada (Model Terpisah / 2-Piece)'),
+    placementSurface: visionAnalysis.placementSurface || 'on one corner of the bed frame',
     roomDetail: visionAnalysis.roomPrompt,
     isVision: true
   } : {
     ...parsedDetails,
+    dressGarment: extractDressGarment(rawOutfitSource) || 'Tidak Ada',
+    placementSurface: 'on one corner of the bed frame',
     isVision: false
   };
 
@@ -634,6 +645,26 @@ export const ImageInfoModal: React.FC<ImageInfoModalProps> = ({
                 </span>
                 <p className="text-xs font-extrabold text-sky-400 leading-snug">
                   {effectiveDetails.bottomGarment}
+                </p>
+              </div>
+
+              {/* Dress Garment / Gaun Terusan */}
+              <div className="flex flex-col gap-0.5 pt-2 border-t border-white/5">
+                <span className="text-[10px] uppercase tracking-wider font-extrabold opacity-50 flex items-center gap-1">
+                  👗 Gaun Terusan (1-Piece Dress / Gamis / Daster)
+                </span>
+                <p className="text-xs font-extrabold text-purple-400 leading-snug">
+                  {effectiveDetails.dressGarment}
+                </p>
+              </div>
+
+              {/* Placement Surface (Tempat Peletakan Pakaian Lepas) */}
+              <div className="flex flex-col gap-0.5 pt-2 border-t border-white/5">
+                <span className="text-[10px] uppercase tracking-wider font-extrabold opacity-50 flex items-center gap-1">
+                  🪑 Tempat Peletakan Pakaian Lepas (Placement Surface)
+                </span>
+                <p className="text-xs font-extrabold text-rose-400 leading-snug">
+                  {effectiveDetails.placementSurface}
                 </p>
               </div>
 

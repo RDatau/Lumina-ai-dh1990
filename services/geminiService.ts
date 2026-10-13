@@ -2045,31 +2045,31 @@ export const generatePAP = async (
     if (garmentBreakdown.isDress) {
       UNDRESS_PROMPT = isHandledInitially
         ? `PARTIAL UNDRESS (DRESS REMOVAL): Character 1 has pulled up or removed her dress (${dressGarment}). Her hips, waist, and legs are natural bare skin. Her removed dress is held in her hands. The setting is clean.${englishCaption ? ' Pose/Action: ' + englishCaption : ''}`
-        : `PARTIAL UNDRESS (DRESS REMOVAL): Character 1 has pulled up or removed her dress (${dressGarment}). Her hips, waist, and legs are natural bare skin. Her removed dress rests neatly ${placementSpot}. The rest of the setting is tidy.${englishCaption ? ' Pose/Action: ' + englishCaption : ''}`;
+        : `PARTIAL UNDRESS (DRESS REMOVAL): Character 1 has pulled up or removed her dress (${dressGarment}). Her hips, waist, and legs are natural bare skin. Her discarded ${dressGarment} 1 piece is placed on ${placementSpot}. The rest of the setting is tidy.${englishCaption ? ' Pose/Action: ' + englishCaption : ''}`;
     } else {
       UNDRESS_PROMPT = isHandledInitially
         ? `PARTIAL UNDRESS (BOTTOMLESS ONLY): Character 1 is wearing her top (${topGarment}) on her torso. Her hips and legs are natural bare skin. Her removed ${bottomGarment} is held in her hands. The setting is clean.${englishCaption ? ' Pose/Action: ' + englishCaption : ''}`
-        : `PARTIAL UNDRESS (BOTTOMLESS ONLY): Character 1 is wearing her top (${topGarment}) on her torso. Her hips and legs are natural bare skin. Her removed ${bottomGarment} rests neatly ${placementSpot}.${englishCaption ? ' Pose/Action: ' + englishCaption : ''}`;
+        : `PARTIAL UNDRESS (BOTTOMLESS ONLY): Character 1 is wearing her top (${topGarment}) on her torso. Her hips and legs are natural bare skin. Her discarded ${bottomGarment} 1 piece is placed on ${placementSpot}.${englishCaption ? ' Pose/Action: ' + englishCaption : ''}`;
     }
   } else if (isTopOnlyUndress) {
     if (garmentBreakdown.isDress) {
       UNDRESS_PROMPT = isHandledInitially
         ? `PARTIAL UNDRESS (TOPLESS DRESS REMOVAL): Character 1 has pulled down her dress (${dressGarment}). Her upper body, chest, and shoulders are natural bare skin. Her dress is held in her hands. The setting is clean.${englishCaption ? ' Pose/Action: ' + englishCaption : ''}`
-        : `PARTIAL UNDRESS (TOPLESS DRESS REMOVAL): Character 1 has pulled down her dress (${dressGarment}). Her upper body, chest, and shoulders are natural bare skin. Her dress rests neatly ${placementSpot}.${englishCaption ? ' Pose/Action: ' + englishCaption : ''}`;
+        : `PARTIAL UNDRESS (TOPLESS DRESS REMOVAL): Character 1 has pulled down her dress (${dressGarment}). Her upper body, chest, and shoulders are natural bare skin. Her discarded ${dressGarment} 1 piece is placed on ${placementSpot}.${englishCaption ? ' Pose/Action: ' + englishCaption : ''}`;
     } else {
       UNDRESS_PROMPT = isHandledInitially
         ? `PARTIAL UNDRESS (TOPLESS ONLY): Character 1 is wearing her bottom (${bottomGarment}). Her chest, torso, and shoulders are natural bare skin. Her removed ${topGarment} is held in her hands. The setting is clean.${englishCaption ? ' Pose/Action: ' + englishCaption : ''}`
-        : `PARTIAL UNDRESS (TOPLESS ONLY): Character 1 is wearing her bottom (${bottomGarment}). Her chest, torso, and shoulders are natural bare skin. Her removed ${topGarment} rests neatly ${placementSpot}.${englishCaption ? ' Pose/Action: ' + englishCaption : ''}`;
+        : `PARTIAL UNDRESS (TOPLESS ONLY): Character 1 is wearing her bottom (${bottomGarment}). Her chest, torso, and shoulders are natural bare skin. Her discarded ${topGarment} 1 piece is placed on ${placementSpot}.${englishCaption ? ' Pose/Action: ' + englishCaption : ''}`;
     }
   } else {
     if (garmentBreakdown.isDress) {
       UNDRESS_PROMPT = isHandledInitially
         ? `FULL UNDRESS: Character 1 is completely undressed (100% natural bare skin, full nudity). Her removed dress (${dressGarment}) is held in her hands. The location setting is ${analyzedRoom}.${englishCaption ? ' Pose/Action: ' + englishCaption : ''}`
-        : `FULL UNDRESS: Character 1 is completely undressed (100% natural bare skin, full nudity). Her removed dress (${dressGarment}) rests neatly folded ${placementSpot}. The location setting is ${analyzedRoom}.${englishCaption ? ' Pose/Action: ' + englishCaption : ''}`;
+        : `FULL UNDRESS: Character 1 is completely undressed (100% natural bare skin, full nudity). Her discarded ${dressGarment} 1 piece is placed on ${placementSpot}. The location setting is ${analyzedRoom}.${englishCaption ? ' Pose/Action: ' + englishCaption : ''}`;
     } else {
       UNDRESS_PROMPT = isHandledInitially
-        ? `FULL UNDRESS: Character 1 is completely undressed (100% natural bare skin, full nudity). Her removed outfit (${analyzedOutfit}) is held in her hands. The location setting is ${analyzedRoom}.${englishCaption ? ' Pose/Action: ' + englishCaption : ''}`
-        : `FULL UNDRESS: Character 1 is completely undressed (100% natural bare skin, full nudity). Her removed outfit (${analyzedOutfit}) rests neatly folded ${placementSpot}. The location setting is ${analyzedRoom}.${englishCaption ? ' Pose/Action: ' + englishCaption : ''}`;
+        ? `FULL UNDRESS: Character 1 is completely undressed (100% natural bare skin, full nudity). Her removed outfit is held in her hands. The location setting is ${analyzedRoom}.${englishCaption ? ' Pose/Action: ' + englishCaption : ''}`
+        : `FULL UNDRESS: Character 1 is completely undressed (100% natural bare skin, full nudity). Her discarded ${topGarment} 1 piece and ${bottomGarment} 1 piece are placed on ${placementSpot}. The location setting is ${analyzedRoom}.${englishCaption ? ' Pose/Action: ' + englishCaption : ''}`;
     }
   }
 
@@ -2288,7 +2288,7 @@ Retain the EXACT SAME LOCATION/SETTING with previous PAP (${analyzedRoom}). Char
             * The user requested to remove bottom/dress: "${rawCaption}".
             * Character 1 has pulled up or removed her 1-piece dress (${dressGarment}). Her hips, waist, and legs are bare skin.
             ${isHandledInitially ? `* SINGLE GARMENT ACTION: Her removed ${dressGarment} is held or set aside directly in her hands/action. DO NOT place any second copy of ${dressGarment} on the bed.
-            * PRISTINE BED: The bed, mattress, and sheets are completely flat, clean, and smooth with zero stray clothes.` : `* MICRO-COMPACT ANCHORING: In the background, strictly ONE single compact,  ${dressGarment} rests quietly on one far corner of the bed. Compact realistic garment size, zero oversized or sprawling cloth.
+            * PRISTINE BED: The bed, mattress, and sheets are completely flat, clean, and smooth with zero stray clothes.` : `* MICRO-COMPACT ANCHORING: Her discarded ${dressGarment} 1 piece is placed on ${placementSpot}. Compact realistic garment size, zero oversized or sprawling cloth.
             * PRISTINE BED: The rest of the mattress and sheets are clean and flat with zero stray cloth.`}`;
         } else {
           outfitTransitionInstruction = `
@@ -2297,7 +2297,7 @@ Retain the EXACT SAME LOCATION/SETTING with previous PAP (${analyzedRoom}). Char
             * The user requested to remove ONLY bottom garment (${bottomGarment}): "${rawCaption}".
             * WORN GARMENT ON BODY: Character 1 is STILL WEARING her exact Atasan (${topGarment}) on her upper body/torso. Her hips and legs are bare skin (bottomless).
             ${isHandledInitially ? `* SINGLE GARMENT ACTION: Her removed pair of ${bottomGarment} is held or set aside directly in her hands/action. DO NOT render a second copy of ${bottomGarment} on the bed.
-            * PRISTINE BED: The mattress and bedsheets are completely smooth, flat, and clean. ZERO duplicate garments, ZERO clothing piles, ZERO stray fabric on bed.` : `* MICRO-COMPACT ANCHORING: In the background, strictly ONE single compact,  pair of ${bottomGarment} rests quietly at one single spot on the far corner of the bed. Compact realistic garment size.
+            * PRISTINE BED: The mattress and bedsheets are completely smooth, flat, and clean. ZERO duplicate garments, ZERO clothing piles, ZERO stray fabric on bed.` : `* MICRO-COMPACT ANCHORING: Her discarded ${bottomGarment} 1 piece is placed on ${placementSpot}. Compact realistic garment size.
             * PRISTINE BED: The mattress and bedsheets are completely smooth, flat, and clean. ZERO duplicate garments, ZERO cloth on the opposite side of the bed, ZERO clothing piles, ZERO stray fabric.`}`;
         }
       } else if (isTopOnlyUndress) {
@@ -2307,7 +2307,7 @@ Retain the EXACT SAME LOCATION/SETTING with previous PAP (${analyzedRoom}). Char
             * The user requested to remove top/baju: "${rawCaption}".
             * Character 1 has unbuttoned or pulled down her 1-piece dress (${dressGarment}). Her shoulders, chest, back, arms, neck, and upper body were bare skin.
             ${isHandledInitially ? `* SINGLE GARMENT ACTION: Her removed ${dressGarment} is held or set aside directly in her hands/action. DO NOT place any second copy of ${dressGarment} on the bed.
-            * PRISTINE BED: The bed, mattress, and sheets are clean and flat with zero duplicate cloth.` : `* MICRO-COMPACT ANCHORING: In the background, strictly ONE single compact,  ${dressGarment} rests quietly on one far corner of the bed. Compact realistic garment size, zero oversized or sprawling cloth.
+            * PRISTINE BED: The bed, mattress, and sheets are clean and flat with zero duplicate cloth.` : `* MICRO-COMPACT ANCHORING: Her discarded ${dressGarment} 1 piece is placed on ${placementSpot}. Compact realistic garment size, zero oversized or sprawling cloth.
             * PRISTINE BED: The rest of the mattress and sheets are clean and flat with zero stray cloth.`}`;
         } else {
           outfitTransitionInstruction = `
@@ -2316,7 +2316,7 @@ Retain the EXACT SAME LOCATION/SETTING with previous PAP (${analyzedRoom}). Char
             * The user requested to remove ONLY top garment (${topGarment}): "${rawCaption}".
             * WORN GARMENT ON BODY: Character 1 is STILL WEARING her exact Bawahan (${bottomGarment}) on her lower body/hips. Her shoulders, chest, back, arms, neck, and upper body were bare skin. (topless).
             ${isHandledInitially ? `* SINGLE GARMENT ACTION: Her removed ${topGarment} is held or set aside directly in her hands/action. DO NOT render a second copy of ${topGarment} on the bed.
-            * PRISTINE BED: The mattress and bedsheets are completely smooth, flat, and clean. ZERO duplicate garments, ZERO cloth on bed, ZERO clothing piles.` : `* MICRO-COMPACT ANCHORING: In the background, strictly ONE single compact,  ${topGarment} rests quietly at one single spot on the far corner of the bed. Compact realistic garment size.
+            * PRISTINE BED: The mattress and bedsheets are completely smooth, flat, and clean. ZERO duplicate garments, ZERO cloth on bed, ZERO clothing piles.` : `* MICRO-COMPACT ANCHORING: Her discarded ${topGarment} 1 piece is placed on ${placementSpot}. Compact realistic garment size.
             * PRISTINE BED: The mattress and bedsheets are completely smooth, flat, and clean. ZERO duplicate garments, ZERO cloth on the opposite side of the bed, ZERO clothing piles, ZERO stray fabric.`}`;
         }
       } else {
@@ -2326,15 +2326,15 @@ Retain the EXACT SAME LOCATION/SETTING with previous PAP (${analyzedRoom}). Char
             * Character 1 is COMPLETELY UNDRESSED with zero clothing at all on her body (100% natural bare skin).
             * EXACT SAME ROOM WITH PREVIOUS PAP: The setting MUST be the EXACT SAME ROOM as Reference Image 2 (${analyzedRoom}).
             ${isHandledInitially ? `* SINGLE GARMENT ACTION: Her removed 1-piece dress (${dressGarment}) is held or set aside directly in her hands/action. DO NOT place any second copy of this dress on the bed.
-            * PRISTINE BED: The mattress and sheets are smooth, flat, and completely clean with zero loose fabric and zero duplicate garments.` : `* MICRO-COMPACT ANCHORING: On one far corner of the bed rests strictly her 1-piece dress (${dressGarment}) as ONE single compact, neatly folded bundle. Authentic storytelling prop.
+            * PRISTINE BED: The mattress and sheets are smooth, flat, and completely clean with zero loose fabric and zero duplicate garments.` : `* MICRO-COMPACT ANCHORING: Her discarded ${dressGarment} 1 piece is placed on ${placementSpot}. Authentic storytelling prop.
             * PRISTINE BED: The rest of the mattress and sheets are smooth, flat, and completely clean with zero loose fabric and zero laundry piles.`}`;
         } else {
           outfitTransitionInstruction = `
           - OUTFIT TRANSITION (FULL UNDRESS FROM 2-PIECE OUTFIT):
             * Character 1 is COMPLETELY UNDRESSED with zero clothing at all on her body (100% natural bare skin).
             * EXACT SAME ROOM WITH PREVIOUS PAP: The setting MUST be the EXACT SAME ROOM as Reference Image 2 (${analyzedRoom}).
-            ${isHandledInitially ? `* SINGLE GARMENT ACTION: Her removed outfit (${analyzedOutfit}) is held or set aside directly in her hands/action. DO NOT render a second copy of this outfit on the bed.
-            * PRISTINE BED: The mattress and sheets are flat, smooth, and clean. ZERO duplicate garments, ZERO cloth on the bed, ZERO loose fabric, ZERO scattered laundry piles.` : `* MICRO-COMPACT ANCHORING: On one single spot at the far corner of the bed rests her removed outfit (${analyzedOutfit}) as a single small,  compact bundle. Compact realistic size, authentic storytelling prop.
+            ${isHandledInitially ? `* SINGLE GARMENT ACTION: Her removed outfit is held or set aside directly in her hands/action. DO NOT render a second copy of this outfit on the bed.
+            * PRISTINE BED: The mattress and sheets are flat, smooth, and clean. ZERO duplicate garments, ZERO cloth on the bed, ZERO loose fabric, ZERO scattered laundry piles.` : `* MICRO-COMPACT ANCHORING: Her discarded ${topGarment} 1 piece and ${bottomGarment} 1 piece are placed on ${placementSpot}. Compact realistic size, authentic storytelling prop.
             * PRISTINE BED: The rest of the mattress and sheets are flat, smooth, and clean. ZERO duplicate garments, ZERO cloth on the opposite side of the bed, ZERO loose fabric, ZERO scattered laundry piles.`}`;
         }
       }
