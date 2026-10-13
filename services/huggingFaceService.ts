@@ -324,11 +324,11 @@ const uploadToGradio = async (spaceHost: string, dataUrl: string, token?: string
       } catch (err) {}
     }
   } catch (err) {
-    console.warn("[HF-Upload] Upload warning, falling back to dataUrl:", err);
+    console.warn("[HF-Upload] Upload error:", err);
   }
 
-  // Fallback: kembalikan dataUrl langsung jika upload endpoint gagal/tidak dapat diakses
-  return dataUrl;
+  // Jika Space menolak upload, lempar error jelas alih-alih dataUrl mentah yang ditolak Gradio modern
+  throw new Error("Gagal mengunggah foto referensi ke server Hugging Face Space. Pastikan URL Space aktif dan dapat diakses.");
 };
 
 /**
@@ -802,97 +802,6 @@ export const generateWithHuggingFaceSpace = async (
   onStatusUpdate?.("Mendeteksi konfigurasi Space ZeroGPU...", inputImage ? { slot: 1, label: "Image 1: Base (Identitas Karakter)", url: inputImage } : undefined);
   const { endpoint, inputComponents } = await inspectSpaceEndpoint(spaceHost, requestedEndpoint);
 
-  // Gunakan token yang sedang aktif dan belum limit untuk upload referensi awal
-  const initialTokenObj = getNextAvailableToken(tokens);
-  const activeTokenForUpload = initialTokenObj?.token || undefined;
-
-  // Format gambar untuk Gradio
-  onStatusUpdate?.("Mempersiapkan gambar karakter (Image 1: Base/Target)...", { slot: 1, label: "Image 1: Base (Identitas Karakter)", url: inputImage });
-  let formattedImage: any = null;
-  if (inputImage) {
-    formattedImage = await uploadToGradio(spaceHost, inputImage, activeTokenForUpload);
-  }
-
-  let formattedExtraRef: any = null;
-  if (extraRefImage) {
-    try {
-      onStatusUpdate?.("Mempersiapkan referensi tambahan (Image 2)...", { slot: 2, label: "Image 2: Referensi (Pose/Outfit)", url: extraRefImage });
-      formattedExtraRef = await uploadToGradio(spaceHost, extraRefImage, activeTokenForUpload);
-    } catch (e) {
-      console.warn("[HF-ZeroGPU] Gagal mengunggah extra reference image:", e);
-    }
-  }
-
-  const formattedGallery: any[] = [];
-  if (Array.isArray(additionalImages) && additionalImages.length > 0) {
-    for (let idx = 0; idx < additionalImages.length; idx++) {
-      const addImg = additionalImages[idx];
-      const slotNum = 3 + idx;
-      try {
-        onStatusUpdate?.(`Mempersiapkan referensi tambahan (Image ${slotNum})...`, { slot: slotNum, label: `Image ${slotNum}: Ruangan & PAP Sebelumnya`, url: addImg });
-        const up = await uploadToGradio(spaceHost, addImg, activeTokenForUpload);
-        if (up) formattedGallery.push(up);
-      } catch (e) {
-        console.warn("[HF-ZeroGPU] Gagal mengunggah gallery reference image:", e);
-      }
-    }
-  }
-
-  // Seluruh referensi gambar terunggah. Menghubungkan ke Space ZeroGPU...
-  if (inputImage) {
-    onStatusUpdate?.("Seluruh referensi gambar terunggah. Menghubungkan ke Space ZeroGPU...");
-  }
-
-  // Bangun payload data dinamis berdasarkan skema komponen Space
-  let payloadData: any[] = [];
-
-  if (inputComponents.length > 0) {
-    let imageInputCount = 0;
-
-    for (const comp of inputComponents) {
-      const type = (comp.type || '').toLowerCase();
-      const label = (comp.label || '').toLowerCase();
-
-      if (type === 'textbox' || label.includes('prompt')) {
-        if (label.includes('negative') || label.includes('neg_prompt') || label.includes('neg prompt')) {
-          payloadData.push("");
-        } else {
-          payloadData.push(effectivePrompt);
-        }
-      } else if (type === 'image' || label.includes('image')) {
-        imageInputCount++;
-        if (imageInputCount === 1) {
-          // Slot 1: Base / Target Image (Foto Profil / Wajah Karakter)
-          payloadData.push(formattedImage || null);
-        } else if (imageInputCount === 2) {
-          // Slot 2: Extra Reference Image (Foto Pakaian / Outfit)
-          payloadData.push(formattedExtraRef || null);
-        } else {
-          payloadData.push(null);
-        }
-      } else if (type === 'gallery' || label.includes('additional')) {
-        // Slot Gallery: Additional Images (auto-indexed after Image 1/2)
-        payloadData.push(formattedGallery);
-      } else if (comp.defaultValue !== undefined && comp.defaultValue !== null) {
-        payloadData.push(comp.defaultValue);
-      } else if (type === 'slider') {
-        if (label.includes('identity lock')) payloadData.push(shouldInjectAnatomy ? 65 : 0);
-        else payloadData.push(0);
-      } else if (type === 'checkbox') {
-        if (label.includes('identity') || label.includes('face') || label.includes('hands') || label.includes('anatomy')) {
-          payloadData.push(shouldInjectAnatomy);
-        } else {
-          payloadData.push(false);
-        }
-      } else {
-        payloadData.push(null);
-      }
-    }
-  } else {
-    // Default fallback jika /config tidak terdeteksi
-    payloadData = formattedImage ? [formattedImage, effectivePrompt] : [effectivePrompt];
-  }
-
   // Maksimum percobaan rotasi sejumlah token yang tersedia
   const maxAttempts = Math.max(1, tokens.length);
   let attempts = 0;
@@ -909,6 +818,88 @@ export const generateWithHuggingFaceSpace = async (
     onStatusUpdate?.(`Menghubungkan ke Space ZeroGPU ${tokenDisplay}...`);
 
     try {
+      // Format gambar untuk Gradio menggunakan token aktif saat ini
+      onStatusUpdate?.("Mempersiapkan gambar karakter (Image 1: Base/Target)...", { slot: 1, label: "Image 1: Base (Identitas Karakter)", url: inputImage });
+      let formattedImage: any = null;
+      if (inputImage) {
+        formattedImage = await uploadToGradio(spaceHost, inputImage, tokenToUse);
+      }
+
+      let formattedExtraRef: any = null;
+      if (extraRefImage) {
+        try {
+          onStatusUpdate?.("Mempersiapkan referensi tambahan (Image 2)...", { slot: 2, label: "Image 2: Referensi (Pose/Outfit)", url: extraRefImage });
+          formattedExtraRef = await uploadToGradio(spaceHost, extraRefImage, tokenToUse);
+        } catch (e) {
+          console.warn("[HF-ZeroGPU] Gagal mengunggah extra reference image:", e);
+        }
+      }
+
+      const formattedGallery: any[] = [];
+      if (Array.isArray(additionalImages) && additionalImages.length > 0) {
+        for (let idx = 0; idx < additionalImages.length; idx++) {
+          const addImg = additionalImages[idx];
+          const slotNum = 3 + idx;
+          try {
+            onStatusUpdate?.(`Mempersiapkan referensi tambahan (Image ${slotNum})...`, { slot: slotNum, label: `Image ${slotNum}: Ruangan & PAP Sebelumnya`, url: addImg });
+            const up = await uploadToGradio(spaceHost, addImg, tokenToUse);
+            if (up) formattedGallery.push(up);
+          } catch (e) {
+            console.warn("[HF-ZeroGPU] Gagal mengunggah gallery reference image:", e);
+          }
+        }
+      }
+
+      if (inputImage) {
+        onStatusUpdate?.("Seluruh referensi gambar terunggah. Menghubungkan ke Space ZeroGPU...");
+      }
+
+      // Bangun payload data dinamis berdasarkan skema komponen Space
+      let payloadData: any[] = [];
+
+      if (inputComponents.length > 0) {
+        let imageInputCount = 0;
+
+        for (const comp of inputComponents) {
+          const type = (comp.type || '').toLowerCase();
+          const label = (comp.label || '').toLowerCase();
+
+          if (type === 'textbox' || label.includes('prompt')) {
+            if (label.includes('negative') || label.includes('neg_prompt') || label.includes('neg prompt')) {
+              payloadData.push("");
+            } else {
+              payloadData.push(effectivePrompt);
+            }
+          } else if (type === 'image' || label.includes('image')) {
+            imageInputCount++;
+            if (imageInputCount === 1) {
+              payloadData.push(formattedImage || null);
+            } else if (imageInputCount === 2) {
+              payloadData.push(formattedExtraRef || null);
+            } else {
+              payloadData.push(null);
+            }
+          } else if (type === 'gallery' || label.includes('additional')) {
+            payloadData.push(formattedGallery);
+          } else if (comp.defaultValue !== undefined && comp.defaultValue !== null) {
+            payloadData.push(comp.defaultValue);
+          } else if (type === 'slider') {
+            if (label.includes('identity lock')) payloadData.push(shouldInjectAnatomy ? 65 : 0);
+            else payloadData.push(0);
+          } else if (type === 'checkbox') {
+            if (label.includes('identity') || label.includes('face') || label.includes('hands') || label.includes('anatomy')) {
+              payloadData.push(shouldInjectAnatomy);
+            } else {
+              payloadData.push(false);
+            }
+          } else {
+            payloadData.push(null);
+          }
+        }
+      } else {
+        payloadData = formattedImage ? [formattedImage, effectivePrompt] : [effectivePrompt];
+      }
+
       let rawResult: any;
       try {
         // Coba Gradio modern SSE terlebih dahulu via proxy
